@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -9,7 +10,7 @@ import java.util.TreeSet;
  * @author Zackary Finer
  *
  */
-public class ProjectSection {
+public class ProjectSection implements Iterable<TaskModel> {
 	
 	/** The list of tasks in this section, sorted in order of start date */
 	private TreeSet<TaskModel> list;
@@ -55,5 +56,10 @@ public class ProjectSection {
 	public String getTitle()
 	{
 		return title;
+	}
+	@Override
+	public Iterator<TaskModel> iterator() {
+		// TODO Auto-generated method stub
+		return list.iterator();
 	}
 }

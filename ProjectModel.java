@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
@@ -7,7 +8,7 @@ import java.util.NoSuchElementException;
  * @author Zackary Finer
  *
  */
-public class ProjectModel {
+public class ProjectModel implements Iterable<ProjectSection> {
 	/*
 	 * So this is the challenge, tasks need to be stored in such a way that their
 	 * order is preserved, and they can be divided up into different sections.
@@ -54,6 +55,11 @@ public class ProjectModel {
 	public void transferTask(String sec1, String sec2, TaskModel t)
 	{
 		//TODO: implement me, gotta find an associated section, and another, then find the task
+	}
+	@Override
+	public Iterator<ProjectSection> iterator() {
+		// TODO Auto-generated method stub
+		return sections.iterator();
 	}
 	
 }
