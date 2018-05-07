@@ -1,12 +1,12 @@
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.GregorianCalendar;
 
 public class TaskModel implements Comparable<TaskModel>{
 
 	private String name;
-	private Date end;
+	private GregorianCalendar end;
 	private String text;
-	public TaskModel(String name, Date end, String text)
+	public TaskModel(String name, GregorianCalendar end, String text)
 	{
 		this.name = name;
 		this.end = end;
@@ -16,7 +16,7 @@ public class TaskModel implements Comparable<TaskModel>{
 	 * Returns the start date for this task
 	 * @return Date representing the start date
 	 */
-	public Date getEnd()
+	public GregorianCalendar getEnd()
 	{
 		return end;
 	}
@@ -35,7 +35,7 @@ public class TaskModel implements Comparable<TaskModel>{
 	public void setText(String text) {
 		this.text = text;
 	}
-	public void setEnd(Date end) {
+	public void setEnd(GregorianCalendar end) {
 		this.end = end;
 	}
 	/**

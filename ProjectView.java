@@ -1,3 +1,8 @@
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.LayoutManager;
+
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -16,14 +21,25 @@ public class ProjectView extends JPanel {
 		{
 			model = _model;
 			taskView = new JPanel();
-			taskView.setLayout(new BoxLayout(taskView, BoxLayout.Y_AXIS));
+			//taskView.setLayout(new BoxLayout(taskView, BoxLayout.Y_AXIS));
+			
 			for(TaskModel c : model)
 			{
 				taskView.add(new TaskLabel(c));
 			}
 			taskView.revalidate();
 			scroller = new JScrollPane(taskView, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-			add(scroller);
+			setLayout(new BorderLayout());
+			add(scroller,BorderLayout.WEST);
+			
+		}
+		public void update()
+		{
+			for (int i = 0; i < taskView.getComponentCount(); i++)
+			{
+				TaskLabel d = ((TaskLabel)(taskView.getComponent(i)));
+				d.update();
+			}
 		}
 	}
 	private ProjectModel data;
@@ -39,5 +55,14 @@ public class ProjectView extends JPanel {
 		}
 		taskScroller = new JScrollPane(taskColumns, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		add(taskScroller);
+	}
+	
+	public void update()
+	{
+		for (int i = 0; i < taskColumns.getComponentCount(); i++)
+		{
+			ColumnView d = ((ColumnView)(taskColumns.getComponent(i)));
+			d.update();
+		}
 	}
 }

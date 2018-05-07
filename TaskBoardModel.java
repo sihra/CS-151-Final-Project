@@ -11,8 +11,16 @@ public class TaskBoardModel {
 	 * Adds a project to the list of projects in this task board model
 	 * @param p - ProjectModel of the project
 	 */
+	public TaskBoardModel()
+	{
+		projectList = new ArrayList<>();
+	}
 	public void addProject(ProjectModel p)
 	{
 		projectList.add(p);
+	}
+	public ProjectModel getSelectedModel()
+	{
+		return projectList.get(0);
 	}
 }
