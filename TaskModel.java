@@ -2,10 +2,16 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class TaskModel implements Comparable<TaskModel>{
+
 	private String name;
 	private Date end;
 	private String text;
-
+	public TaskModel(String name, Date end, String text)
+	{
+		this.name = name;
+		this.end = end;
+		this.text = text;
+	}
 	/**
 	 * Returns the start date for this task
 	 * @return Date representing the start date
@@ -13,6 +19,24 @@ public class TaskModel implements Comparable<TaskModel>{
 	public Date getEnd()
 	{
 		return end;
+	}
+	/*
+	 * Below was auto-generated
+	 */
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getText() {
+		return text;
+	}
+	public void setText(String text) {
+		this.text = text;
+	}
+	public void setEnd(Date end) {
+		this.end = end;
 	}
 	/**
 	 * Compares two tasks, first by date, then by title
