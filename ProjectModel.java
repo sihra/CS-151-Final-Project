@@ -38,13 +38,21 @@ public class ProjectModel implements Iterable<ProjectSection> {
 	{
 		for (int i = 0; i < sections.size(); i++)//search for the right section
 		{
-			if (sections.get(i).getTitle().equals(section))//if we find it
+			if (sections.get(i).getTitle().toLowerCase().equals(section.toLowerCase()))//if we find it
 			{
 				sections.get(i).addTask(t);//add the task
 				return;//terminate
 			}
 		}
 		throw new NoSuchElementException("The associated section " + section + " could not be found.");
+	}
+	public void addSection(ProjectSection s)
+	{
+		sections.add(s);
+	}
+	public void clearView()
+	{
+		sections.clear();
 	}
 	/**
 	 * Transfers a task from one section into another
@@ -61,5 +69,17 @@ public class ProjectModel implements Iterable<ProjectSection> {
 		// TODO Auto-generated method stub
 		return sections.iterator();
 	}
-	
+	public boolean containsSection(String sec)
+	{
+		for (int i = 0; i < sections.size(); i++)
+		{
+			if (sections.get(i).getTitle().toLowerCase().equals(sec.toLowerCase()))
+				return true;
+		}
+		return false;
+	}
+	public int count()
+	{
+		return sections.size();
+	}
 }

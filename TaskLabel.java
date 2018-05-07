@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.Dimension;
 import java.util.GregorianCalendar;
 
@@ -18,6 +19,7 @@ public class TaskLabel extends JTextArea{
 	public TaskLabel(TaskModel data)
 	{
 		setEditable(false);
+		//setBackground(Color.BLUE);
 		setLineWrap(true);
 		setWrapStyleWord(true);
 		this.data = data;
