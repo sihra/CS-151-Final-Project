@@ -1,57 +1,50 @@
-import java.awt.Graphics;
+import java.util.ArrayList;
 import java.util.Date;
 
-import javax.swing.JPanel;
+public class TaskModel implements Comparable<TaskModel>{
+	private String name;
+	private Date end;
+	private String text;
 
-public class TaskModel extends JPanel{
-	private String name = "Task1";
-	private String description;
-	private Date dueDate;
-	private String status;
-	private int importance;
-
-	public String getName() {
-		return name;
+	/**
+	 * Returns the start date for this task
+	 * @return Date representing the start date
+	 */
+	public Date getEnd()
+	{
+		return end;
 	}
-
-	public void setName(String name) {
-		this.name = name;
+	/**
+	 * Compares two tasks, first by date, then by title
+	 * @return Integer representing the decision, -1 if less than, 1 if greater than, 0 if equal
+	 */
+	@Override
+	public int compareTo(TaskModel other)
+	{
+		int decision;
+		if ((decision=this.end.compareTo(other.end))==0)
+		{
+			return name.compareTo(other.name);
+		}
+		return decision;
 	}
-
-	public String getDescription() {
-		return description;
+	@Override
+	public boolean equals(Object o)
+	{
+		if (o.getClass().equals(this.getClass()))
+		{
+			TaskModel other = (TaskModel)o;
+			return this.compareTo(other)==0;
+		}
+		return false;
 	}
-
-	public void setDescription(String description) {
-		this.description = description;
+	@Override
+	public int hashCode()
+	{
+		ArrayList<Object> hasher = new ArrayList<>();
+		hasher.add(name);
+		hasher.add(text);
+		hasher.add(end);
+		return hasher.hashCode();
 	}
-
-	public Date getDueDate() {
-		return dueDate;
-	}
-
-	public void setDueDate(Date dueDate) {
-		this.dueDate = dueDate;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
-	public int getImportance() {
-		return importance;
-	}
-
-	public void setImportance(int importance) {
-		this.importance = importance;
-	}
-
-	public void paintComponents(Graphics g) {
-
-	}
-
 }
