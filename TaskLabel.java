@@ -3,6 +3,7 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.text.SimpleDateFormat;
 import java.awt.event.MouseAdapter;
 import java.util.GregorianCalendar;
 
@@ -26,10 +27,11 @@ public class TaskLabel extends JTextArea implements ViewInterface{
 	public static final int DEFAULT_HEIGHT = 100;
 	private TaskModel data;//reference to the task this label is displying
 	private String text;
-	private TaskController controller;
+	private ProjectController controller;
 	private boolean isHighlighted = false;
-	public TaskLabel(TaskModel data)
+	public TaskLabel(TaskModel data, ProjectController caller)
 	{
+		controller = caller;
 		setEditable(false);
 		//setBackground(Color.BLUE);
 		setLineWrap(true);
@@ -48,7 +50,7 @@ public class TaskLabel extends JTextArea implements ViewInterface{
 		addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent evt){
-				TaskView c = new TaskView(data, false);
+				TaskView c = new TaskView(data, false, controller);
 				c.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 				c.setVisible(true);
 			}
@@ -69,7 +71,9 @@ public class TaskLabel extends JTextArea implements ViewInterface{
 	{
 		text = "Name: "+data.getName()+"\n";
 		text+= "\nDescription: "+data.getText()+"\n";
-		text+="\n"+parseDate()+"\n";
+		SimpleDateFormat p = new SimpleDateFormat("MM-dd-yyyy");
+		
+		text+="\n"+p.format(data.getEnd().getTime())+"\n";
 	}
 	public void update()
 	{

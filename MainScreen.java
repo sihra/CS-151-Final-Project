@@ -23,8 +23,8 @@ public class MainScreen extends JFrame implements ViewInterface{
 	public static void main(String[] args)
 	{
 		ProjectModel c = new ProjectModel();
-		c.addTask(new TaskModel("Do Entire Project", new GregorianCalendar(), "In this case, if parent was red, then we didn’t need to recur for prent, we can simply make it black (red + double black = single black)"), "Done");
-		c.addTask(new TaskModel("Do Entire Project2", new GregorianCalendar(), "In this case, if parent was red, then we didn’t need to recur for prent, we can simply make it black (red + double black = single black)"), "Done");
+		c.addTask(new TaskModel("Do Entire Project", new GregorianCalendar(), "In this case, if parent was red, then we didn’t need to recur for prent, we can simply make it black (red + double black = single black)", "Done"), "Done");
+		c.addTask(new TaskModel("Do Entire Project2", new GregorianCalendar(), "In this case, if parent was red, then we didn’t need to recur for prent, we can simply make it black (red + double black = single black)", "Done"), "Done");
 		TaskBoardModel d = new TaskBoardModel();
 		d.addProject(c);
 		MainScreen view = new MainScreen(d);
@@ -33,6 +33,6 @@ public class MainScreen extends JFrame implements ViewInterface{
 		//c.clearView();
 		c.addSection(new ProjectSection("Test"));
 		//view.update();
-		c.addTask(new TaskModel("Do Entire Project", new GregorianCalendar(), "In this case, if parent was red, then we didn’t need to recur for prent, we can simply make it black (red + double black = single black)"), "Done");
+		c.addTask(new TaskModel("Do Entire Project", new GregorianCalendar(), "In this case, if parent was red, then we didn’t need to recur for prent, we can simply make it black (red + double black = single black)", "Done"), "Done");
 	}
 }

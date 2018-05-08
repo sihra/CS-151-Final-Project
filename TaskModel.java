@@ -1,17 +1,26 @@
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
-public class TaskModel implements Comparable<TaskModel>{
+public class TaskModel implements Comparable<TaskModel>, Cloneable{
 
 	private String name;
 	private GregorianCalendar end;
 	private String text;
 	private ArrayList<ViewInterface> views = new ArrayList<ViewInterface>();
-	public TaskModel(String name, GregorianCalendar end, String text)
+	private String category;
+	public String getCategory() {
+		return category;
+	}
+	public void setCategory(String category) {
+		this.category = category;
+	}
+	public TaskModel(String name, GregorianCalendar end, String text, String category)
 	{
 		this.name = name;
 		this.end = end;
 		this.text = text;
+		this.category = category;
 	}
 	/**
 	 * Returns the start date for this task
@@ -52,9 +61,18 @@ public class TaskModel implements Comparable<TaskModel>{
 		int decision;
 		if ((decision=this.end.compareTo(other.end))==0)
 		{
-			return name.compareTo(other.name);
+			if ((decision=this.name.compareTo(other.name))==0)
+			{
+				decision = this.text.compareTo(other.text);
+			}
+			
 		}
 		return decision;
+	}
+	public String toString()
+	{
+		SimpleDateFormat y = new SimpleDateFormat("MM-dd-yyyy");
+		return "["+name+", "+y.format(end.getTime())+"]";
 	}
 	@Override
 	public boolean equals(Object o)
@@ -66,6 +84,7 @@ public class TaskModel implements Comparable<TaskModel>{
 		}
 		return false;
 	}
+	
 	@Override
 	public int hashCode()
 	{
@@ -85,5 +104,10 @@ public class TaskModel implements Comparable<TaskModel>{
 		{
 			c.update();
 		}
+	}
+	@Override
+	public Object clone()
+	{
+		return new TaskModel(name, end, text, category);
 	}
 }

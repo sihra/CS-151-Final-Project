@@ -25,18 +25,20 @@ public class ProjectView extends JPanel implements ViewInterface{
 	class ColumnView extends JPanel {
 		private static final int V_SPACING = 5;
 		private ProjectSection model;
+		private ProjectController parent;
 		private JScrollPane scroller;
 		private JPanel taskView;
 		private int count;
-		public ColumnView(ProjectSection _model)
+		public ColumnView(ProjectSection _model, ProjectController _parent)
 		{
 			model = _model;
+			parent = _parent;
 			taskView = new JPanel();
 			taskView.setLayout(new BoxLayout(taskView, BoxLayout.Y_AXIS));
 			
 			for(TaskModel c : model)
 			{
-				taskView.add(new TaskLabel(c));
+				taskView.add(new TaskLabel(c, controller));
 				taskView.add(Box.createRigidArea(new Dimension(V_SPACING,V_SPACING)));
 				count++;
 			}
@@ -45,8 +47,17 @@ public class ProjectView extends JPanel implements ViewInterface{
 			//setLayout(new BorderLayout());
 			setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 			setPreferredSize(new Dimension(175, 400));
+			JButton addTaskB = new JButton("+");
+			addTaskB.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					parent.addTask(model.getTitle(), new TaskModel("New Task", new GregorianCalendar(), "",model.getTitle()));
+				}
+			});
 			add(new JLabel(model.getTitle()));
 			add(scroller);
+			add(addTaskB);
 			
 		}
 		public void update()
@@ -61,7 +72,7 @@ public class ProjectView extends JPanel implements ViewInterface{
 				taskView.removeAll();
 				for(TaskModel c : model)
 				{
-					taskView.add(new TaskLabel(c));
+					taskView.add(new TaskLabel(c, controller));
 					taskView.add(Box.createRigidArea(new Dimension(V_SPACING,V_SPACING)));
 					count++;
 				}
@@ -96,7 +107,7 @@ public class ProjectView extends JPanel implements ViewInterface{
 		taskColumns.setLayout(new BoxLayout(taskColumns, BoxLayout.X_AXIS));
 		for (ProjectSection c: data)
 		{
-			taskColumns.add(new ColumnView(c));
+			taskColumns.add(new ColumnView(c, controller));
 			count++;
 		}
 		taskScroller = new JScrollPane(taskColumns, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -127,6 +138,7 @@ public class ProjectView extends JPanel implements ViewInterface{
 		 * Thus, by performing these operations in that thread we correct this issue.
 		 * 
 		 */
+		ProjectView exterior = this;
 		EventQueue.invokeLater(new Runnable() { public void run() {
 			if (data.count()!=count)
 			{
@@ -134,7 +146,7 @@ public class ProjectView extends JPanel implements ViewInterface{
 				taskColumns.removeAll();
 				for (ProjectSection c: data)
 				{
-					taskColumns.add(new ColumnView(c));
+					taskColumns.add(new ColumnView(c, controller));
 				}
 				taskColumns.revalidate();
 			}

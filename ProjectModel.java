@@ -52,6 +52,19 @@ public class ProjectModel implements Iterable<ProjectSection> {
 		}
 		throw new NoSuchElementException("The associated section " + section + " could not be found.");
 	}
+	public void updateTask(String section)
+	{
+		for (int i = 0; i < sections.size(); i++)//search for the right section
+		{
+			if (sections.get(i).getTitle().toLowerCase().equals(section.toLowerCase()))//if we find it
+			{
+				sections.get(i).updateTask();//update the specified task
+				notifyViews();
+				return;//terminate
+			}
+		}
+		throw new NoSuchElementException("The associated section " + section + " could not be found.");
+	}
 	public void addSection(ProjectSection s)
 	{
 		sections.add(s);

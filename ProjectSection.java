@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 /**
@@ -32,6 +29,18 @@ public class ProjectSection implements Iterable<TaskModel> {
 	public void addTask(TaskModel t)
 	{
 		list.add(t);
+	}
+	public void updateTask()
+	{
+		TreeSet<TaskModel> temp = new TreeSet<>();
+		
+		for (TaskModel c : list)
+			temp.add(c);
+		
+		list.clear();
+		list.addAll(temp);
+		//System.out.println(list.toString());
+		//notifyAll();
 	}
 	/**
 	 * Removes a task from the list of all tasks

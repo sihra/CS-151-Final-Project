@@ -2,6 +2,8 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
 
 import javax.swing.BoxLayout;
@@ -13,6 +15,8 @@ import javax.swing.JTextField;
 
 public class TaskView extends JFrame implements ViewInterface {
 	TaskModel data;
+	TaskController controller;
+	ProjectController parent;
 	private JTextArea description;
 	private JTextField title;
 	private JTextField date;
@@ -20,10 +24,12 @@ public class TaskView extends JFrame implements ViewInterface {
 	private JButton okB;
 	private JButton closeB;
 	private boolean isEditing;
-	public TaskView(TaskModel _data, boolean editMode) {
+	public TaskView(TaskModel _data, boolean editMode, ProjectController _parent) {
 		super("Task View");
 		data = _data;
+		parent = _parent;
 		data.attach(this);
+		controller = new TaskController(data, parent);
 		isEditing = editMode;
 		//setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		//setLayout(new FlowLayout());
@@ -41,6 +47,18 @@ public class TaskView extends JFrame implements ViewInterface {
 		JPanel infoPane = new JPanel();
 		infoPane.setLayout(new BoxLayout(infoPane, BoxLayout.Y_AXIS));
 		options.add(editB);
+		editB.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				isEditing = !isEditing;
+				update();
+				if (!isEditing)
+				{
+					updateModel();
+				}
+			}
+		});
 		options.add(okB);
 		options.add(closeB);
 		infoPane.add(title);
@@ -52,16 +70,18 @@ public class TaskView extends JFrame implements ViewInterface {
 		pack();
 		
 	}
+	public void updateModel()
+	{
+		controller.setTitle(title.getText());
+		controller.setDescription(description.getText());
+		controller.setDueDate(date.getText());
+	}
 	@Override
 	public void update() {
 		EventQueue.invokeLater(new Runnable() {
 			
 			@Override
 			public void run() {
-				if (isEditing)
-				{
-					
-				}
 				//System.out.println(data.getName());
 				title.setText(data.getName());
 				description.setText(data.getText());
@@ -71,7 +91,7 @@ public class TaskView extends JFrame implements ViewInterface {
 				date.setEditable(isEditing);
 				repaint();
 				date.setText(f.format(data.getEnd().getTime()));
-				
+				revalidate();
 			}
 		});
 		

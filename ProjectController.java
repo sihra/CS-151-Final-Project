@@ -8,4 +8,12 @@ public class ProjectController {
 	{
 		model.addSection(new ProjectSection(s));
 	}
+	public void addTask(String s, TaskModel n)
+	{
+		model.addTask(n, s);
+	}
+	public void updateTask(String s)
+	{
+		model.updateTask(s);
+	}
 }
