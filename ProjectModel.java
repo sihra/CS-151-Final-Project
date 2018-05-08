@@ -14,6 +14,7 @@ public class ProjectModel implements Iterable<ProjectSection> {
 	 * order is preserved, and they can be divided up into different sections.
 	 * One idea could be to use a double array
 	 */
+	private ArrayList<ViewInterface> views = new ArrayList<>();
 	/** the list of sections contained in this project, default will contain 4 sections */
 	private ArrayList<ProjectSection> sections;
 	/**
@@ -28,6 +29,10 @@ public class ProjectModel implements Iterable<ProjectSection> {
 		sections.add(new ProjectSection("Review"));
 		sections.add(new ProjectSection("Done"));
 	}
+	public void attach(ViewInterface view)
+	{
+		views.add(view);
+	}
 	/**
 	 * Adds a task to an associated section in the project model.
 	 * @param t - TaskModel to be added to this project model
@@ -41,6 +46,7 @@ public class ProjectModel implements Iterable<ProjectSection> {
 			if (sections.get(i).getTitle().toLowerCase().equals(section.toLowerCase()))//if we find it
 			{
 				sections.get(i).addTask(t);//add the task
+				notifyViews();
 				return;//terminate
 			}
 		}
@@ -49,10 +55,12 @@ public class ProjectModel implements Iterable<ProjectSection> {
 	public void addSection(ProjectSection s)
 	{
 		sections.add(s);
+		notifyViews();
 	}
 	public void clearView()
 	{
 		sections.clear();
+		notifyViews();
 	}
 	/**
 	 * Transfers a task from one section into another
@@ -81,5 +89,12 @@ public class ProjectModel implements Iterable<ProjectSection> {
 	public int count()
 	{
 		return sections.size();
+	}
+	public void notifyViews()
+	{
+		for (ViewInterface c : views)
+		{
+			c.update();
+		}
 	}
 }

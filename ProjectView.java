@@ -3,15 +3,20 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.GridLayout;
 import java.awt.LayoutManager;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.GregorianCalendar;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 
-public class ProjectView extends JPanel {
+public class ProjectView extends JPanel implements ViewInterface{
 /*
  * So here's the deal, this thing is gunna need a scroll panel FOR SURE, it will contain a sub panel with the various columns
  * of tasks that the user has, as well as buttons to manipulate these columns. So what i'm thinking is, there is a private class
@@ -78,12 +83,15 @@ public class ProjectView extends JPanel {
 			return model;
 		}
 	}
+	private ProjectController controller;
 	private ProjectModel data;
 	private JPanel taskColumns;
 	private JScrollPane taskScroller;
 	private int count;
 	public ProjectView(ProjectModel _data) {
 		data = _data;
+		data.attach(this);
+		controller = new ProjectController(data);//the controller will designate methods for how to handle user input
 		taskColumns = new JPanel();
 		taskColumns.setLayout(new BoxLayout(taskColumns, BoxLayout.X_AXIS));
 		for (ProjectSection c: data)
@@ -93,6 +101,19 @@ public class ProjectView extends JPanel {
 		}
 		taskScroller = new JScrollPane(taskColumns, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		add(taskScroller);
+		
+		JPanel buttons = new JPanel();
+		JTextField columnName = new JTextField(40);
+		JButton addColumnB = new JButton("Add Column");
+		addColumnB.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controller.addColumn(columnName.getText());
+			}
+		});
+		buttons.add(columnName);
+		buttons.add(addColumnB);
+		add(buttons);
 	}
 	
 	public void update()

@@ -6,6 +6,7 @@ public class TaskModel implements Comparable<TaskModel>{
 	private String name;
 	private GregorianCalendar end;
 	private String text;
+	private ArrayList<ViewInterface> views = new ArrayList<ViewInterface>();
 	public TaskModel(String name, GregorianCalendar end, String text)
 	{
 		this.name = name;
@@ -28,15 +29,18 @@ public class TaskModel implements Comparable<TaskModel>{
 	}
 	public void setName(String name) {
 		this.name = name;
+		notifyViews();
 	}
 	public String getText() {
 		return text;
 	}
 	public void setText(String text) {
 		this.text = text;
+		notifyViews();
 	}
 	public void setEnd(GregorianCalendar end) {
 		this.end = end;
+		notifyViews();
 	}
 	/**
 	 * Compares two tasks, first by date, then by title
@@ -70,5 +74,16 @@ public class TaskModel implements Comparable<TaskModel>{
 		hasher.add(text);
 		hasher.add(end);
 		return hasher.hashCode();
+	}
+	public void attach(ViewInterface view)
+	{
+		views.add(view);
+	}
+	public void notifyViews()
+	{
+		for (ViewInterface c : views)
+		{
+			c.update();
+		}
 	}
 }

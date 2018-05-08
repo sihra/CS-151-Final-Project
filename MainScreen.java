@@ -4,7 +4,7 @@ import java.util.GregorianCalendar;
 
 import javax.swing.JFrame;
 
-public class MainScreen extends JFrame{
+public class MainScreen extends JFrame implements ViewInterface{
 	private ProjectView projView;
 	private TaskBoardModel data;
 	public void update()
@@ -15,6 +15,7 @@ public class MainScreen extends JFrame{
 	}
 	public MainScreen(TaskBoardModel _data) {
 		data = _data;
+		data.attach(this);
 		projView = new ProjectView(data.getSelectedModel());
 		add(projView);
 		pack();
@@ -30,8 +31,8 @@ public class MainScreen extends JFrame{
 		view.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		view.setVisible(true);
 		//c.clearView();
-		c.addSection(new ProjectSection("TEst"));
-		view.update();
+		c.addSection(new ProjectSection("Test"));
+		//view.update();
 		c.addTask(new TaskModel("Do Entire Project", new GregorianCalendar(), "In this case, if parent was red, then we didn’t need to recur for prent, we can simply make it black (red + double black = single black)"), "Done");
 	}
 }

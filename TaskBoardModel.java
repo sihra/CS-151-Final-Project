@@ -7,6 +7,7 @@ import java.util.ArrayList;
  */
 public class TaskBoardModel {
 	private ArrayList<ProjectModel> projectList;
+	private ArrayList<ViewInterface> views= new ArrayList<>();
 	/**
 	 * Adds a project to the list of projects in this task board model
 	 * @param p - ProjectModel of the project
@@ -15,12 +16,24 @@ public class TaskBoardModel {
 	{
 		projectList = new ArrayList<>();
 	}
+	public void attach(ViewInterface view)
+	{
+		views.add(view);
+	}
 	public void addProject(ProjectModel p)
 	{
 		projectList.add(p);
+		notifyViews();
 	}
 	public ProjectModel getSelectedModel()
 	{
 		return projectList.get(0);
+	}
+	public void notifyViews()
+	{
+		for (ViewInterface c : views)
+		{
+			c.update();
+		}
 	}
 }
