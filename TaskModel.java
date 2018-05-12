@@ -120,6 +120,7 @@ public class TaskModel implements Comparable<TaskModel>, Cloneable{
 	}
 	public void notifyViews()
 	{
+		System.out.println("Task update was run");
 		for (ViewInterface c : views)
 		{
 			c.update();

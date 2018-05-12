@@ -153,9 +153,6 @@ public class ProjectView extends JPanel implements ViewInterface{
 		}
 		return _return;
 	}
-	public void updateSelected(ProjectModel data)
-	{
-	}
 	public void update()
 	{
 		/*

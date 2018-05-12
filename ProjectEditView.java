@@ -20,7 +20,7 @@ public class ProjectEditView extends JFrame implements ViewInterface{
 	private JScrollPane sectionListScroller;
 	public ProjectEditView(ProjectModel data) {
 		this.data = data;
-		titleField = new JTextField(20);
+		titleField = new JTextField(data.getName());
 		sectionListModel = new DefaultListModel<>();
 		sectionList = new JList<>(sectionListModel);
 		sectionListScroller = new JScrollPane(sectionList);

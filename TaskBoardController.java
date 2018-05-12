@@ -1,4 +1,5 @@
 import java.io.File;
+import java.io.FileNotFoundException;
 
 public class TaskBoardController {
 	/*
@@ -34,15 +35,27 @@ public class TaskBoardController {
 	{
 		return filePath;
 	}
-	public ProjectModel loadProjectFromFile(String filePath)
+	public TaskBoardModel loadProjectFromFile(File location)
 	{
 		//TODO: use file loader here
-		//return TaskFileManager.readFromFile(new File(filePath));
+		try {
+			return TaskFileManager.readFromFile(location);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return null;
+		//return null;
 	}
-	public void saveProjectsToFile(String filePath)
+	public void saveProjectsToFile(File location, TaskBoardModel c)
 	{
 		//TODO: use file loader here
+		try {
+			TaskFileManager.saveToFile(c, location);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	public void setSelectedProject(int index)
 	{

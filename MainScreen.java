@@ -3,6 +3,7 @@ import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -10,6 +11,7 @@ import java.util.GregorianCalendar;
 import javax.naming.Context;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -57,18 +59,18 @@ public class MainScreen extends JFrame implements ViewInterface{
 	public static void main(String[] args)
 	{
 		ProjectModel c = new ProjectModel("Test");
-		c.addTask(new TaskModel("Do Entire Project", new GregorianCalendar(), "In this case, if parent was red, then we didn’t need to recur for prent, we can simply make it black (red + double black = single black)", "Done"), "Done");
-		c.addTask(new TaskModel("Do Entire Project2", new GregorianCalendar(), "In this case, if parent was red, then we didn’t need to recur for prent, we can simply make it black (red + double black = single black)", "Done"), "Done");
+		//c.addTask(new TaskModel("Do Entire Project", new GregorianCalendar(), "In this case, if parent was red, then we didn’t need to recur for prent, we can simply make it black (red + double black = single black)", "Done"), "Done");
+		//c.addTask(new TaskModel("Do Entire Project2", new GregorianCalendar(), "In this case, if parent was red, then we didn’t need to recur for prent, we can simply make it black (red + double black = single black)", "Done"), "Done");
 		TaskBoardModel d = new TaskBoardModel();
 		d.addProject(c);
 		MainScreen view = new MainScreen(d);
 		view.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		view.setVisible(true);
 		//c.clearView();
-		c.addSection(new ProjectSection("Test"));
+		//c.addSection(new ProjectSection("Test"));
 
 		//view.update();
-		c.addTask(new TaskModel("Do Entire Project", new GregorianCalendar(), "In this case, if parent was red, then we didn’t need to recur for prent, we can simply make it black (red + double black = single black)", "Done"), "Done");
+		//c.addTask(new TaskModel("Do Entire Project", new GregorianCalendar(), "In this case, if parent was red, then we didn’t need to recur for prent, we can simply make it black (red + double black = single black)", "Done"), "Done");
 		
 	}
 }
@@ -90,6 +92,10 @@ class TaskBoardEditPanel extends JPanel implements ViewInterface
 		data = _data;
 		parentScr = _parent;
 		data.attach(this);
+		for (ProjectModel c: data)
+		{
+			c.attach(this);
+		}
 		editB = new JButton("edit");
 		editB.addActionListener(new ActionListener() {
 			
@@ -112,18 +118,35 @@ class TaskBoardEditPanel extends JPanel implements ViewInterface
 			}
 		});
 		saveB = new JButton("save");
+		saveB.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser fc = new JFileChooser();
+				fc.showOpenDialog(parentScr);
+				//File selected = fc.getSelectedFile();
+				//System.out.println(selected.getAbsolutePath());
+			}
+		});
 		loadB = new JButton("load");
 		sectionCB = new JComboBox<>();
 		sectionCB.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				data.setSelected(sectionCB.getSelectedIndex());
-				if (sectionCB.getSelectedIndex()>=0)
-				{
-					//parentScr.getProjectView().updateSelected(data.getSelectedModel());
-					parentScr.updateSelectedView();
-				}
+				EventQueue.invokeLater(new Runnable() {
+					
+					@Override
+					public void run() {
+						data.setSelected(sectionCB.getSelectedIndex());
+						if (sectionCB.getSelectedIndex()>=0)
+						{
+							//parentScr.getProjectView().updateSelected(data.getSelectedModel());
+							parentScr.updateSelectedView();
+						}
+					}
+				});
+
 			}
 		});
 		for (ProjectModel c : data)
@@ -135,6 +158,7 @@ class TaskBoardEditPanel extends JPanel implements ViewInterface
 		add(sectionCB);
 		add(saveB);
 		add(loadB);
+		add(editB);
 		add(createNewB);
 		
 	}
@@ -146,6 +170,7 @@ class TaskBoardEditPanel extends JPanel implements ViewInterface
 			@Override
 			public void run() {
 				//System.out.println(data.getProjectList().size());
+				System.out.println("RUN!!!");
 				sectionCB.removeAllItems();
 				System.out.println();
 				for (ProjectModel c : data)

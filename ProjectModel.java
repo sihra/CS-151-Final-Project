@@ -24,6 +24,7 @@ public class ProjectModel implements Iterable<ProjectSection> {
 
 	public void setName(String name) {
 		this.name = name;
+		notifyViews();
 	}
 
 	/**
@@ -142,6 +143,7 @@ public class ProjectModel implements Iterable<ProjectSection> {
 	}
 	public void notifyViews()
 	{
+		System.out.println("Project update was run");
 		for (ViewInterface c : views)
 		{
 			c.update();

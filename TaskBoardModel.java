@@ -7,6 +7,7 @@ import java.util.Iterator;
  *
  */
 public class TaskBoardModel implements Iterable<ProjectModel>{
+	
 	private ArrayList<ProjectModel> projectList;
 	private int selectedIndex;
 	public ArrayList<ProjectModel> getProjectList() {
@@ -41,6 +42,7 @@ public class TaskBoardModel implements Iterable<ProjectModel>{
 	}
 	public void notifyViews()
 	{
+		System.out.println("TaskBoard update was run");
 		for (ViewInterface c : views)
 		{
 			c.update();
