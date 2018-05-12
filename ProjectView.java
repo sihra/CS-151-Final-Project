@@ -111,6 +111,10 @@ public class ProjectView extends JPanel implements ViewInterface{
 	private JScrollPane taskScroller;
 	private DragListener dListener;
 	private int count;
+	public ProjectView()
+	{
+		//do nothing if there isn't any content to add
+	}
 	public ProjectView(ProjectModel _data) {
 		dListener = new DragListener(this);
 		data = _data;
@@ -166,6 +170,8 @@ public class ProjectView extends JPanel implements ViewInterface{
 		 */
 		ProjectView exterior = this;
 		EventQueue.invokeLater(new Runnable() { public void run() {
+			if (data!=null)
+			{
 			if (data.count()!=count)
 			{
 				count = 0;
@@ -183,6 +189,7 @@ public class ProjectView extends JPanel implements ViewInterface{
 			}
 			revalidate();
 			repaint();
+			}
 	    }});
 
 	}

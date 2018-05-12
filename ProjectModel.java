@@ -14,9 +14,20 @@ public class ProjectModel implements Iterable<ProjectSection> {
 	 * order is preserved, and they can be divided up into different sections.
 	 * One idea could be to use a double array
 	 */
+	private boolean isDirty = false;
+	public boolean isDirty() {
+		return isDirty;
+	}
+
+	public void setDirty(boolean isDirty) {
+		this.isDirty = isDirty;
+	}
 	private ArrayList<ViewInterface> views = new ArrayList<>();
 	/** the list of sections contained in this project, default will contain 4 sections */
 	private ArrayList<ProjectSection> sections; // Status of the task
+	public void setSections(ArrayList<ProjectSection> sections) {
+		this.sections = sections;
+	}
 	private String name;
 	public String getName() {
 		return name;
@@ -31,6 +42,11 @@ public class ProjectModel implements Iterable<ProjectSection> {
 	 * Default constructor for project model objects, takes no parameters and
 	 * initializes the section to contain todo, inprogress, review, and done
 	 */
+	public ProjectModel()
+	{
+		sections = new ArrayList<>();
+		name = "";
+	}
 	public ProjectModel(String _name)
 	{
 		sections = new ArrayList<>();
@@ -143,7 +159,7 @@ public class ProjectModel implements Iterable<ProjectSection> {
 	}
 	public void notifyViews()
 	{
-		System.out.println("Project update was run");
+		isDirty = true;
 		for (ViewInterface c : views)
 		{
 			c.update();

@@ -10,12 +10,27 @@ import java.util.GregorianCalendar;
 
 public class TaskModel implements Comparable<TaskModel>, Cloneable{
 
+	private boolean isDirty = false;
+	public boolean isDirty() {
+		return isDirty;
+	}
+
+	public void setDirty(boolean isDirty) {
+		this.isDirty = isDirty;
+	}
+
 	private String name;
 	private GregorianCalendar end;
 	private String text;
 	private ArrayList<ViewInterface> views = new ArrayList<ViewInterface>(); // ArrayList of View classes that are used to represent parts of TaskModel
 	private String category;
-
+	public TaskModel()
+	{
+		this.name = "";
+		this.end = null;
+		this.text = "";
+		this.category = "";
+	}
 	/**
 	 * TaskModel constructor that initializes the Task variables and view class attached to TaskModel
 	 * @param name - name of the task
@@ -120,7 +135,7 @@ public class TaskModel implements Comparable<TaskModel>, Cloneable{
 	}
 	public void notifyViews()
 	{
-		System.out.println("Task update was run");
+		isDirty = true;
 		for (ViewInterface c : views)
 		{
 			c.update();

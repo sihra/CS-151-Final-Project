@@ -4,20 +4,18 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.text.DateFormat;
-import java.util.Date;
-import java.util.GregorianCalendar;
+import java.io.FileNotFoundException;
 
-import javax.naming.Context;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
+
 
 public class MainScreen extends JFrame implements ViewInterface{
 	private ProjectView projView;
+	private TaskBoardEditPanel editP;
 	public ProjectView getProjectView()
 	{
 		return projView;
@@ -51,19 +49,40 @@ public class MainScreen extends JFrame implements ViewInterface{
 		data.attach(this);
 		setLayout(new BorderLayout());
 		projView = new ProjectView(data.getSelectedModel());
-		TaskBoardEditPanel edit = new TaskBoardEditPanel(_data, this);
-		add(edit, BorderLayout.NORTH);
+		editP = new TaskBoardEditPanel(_data, this);
+		add(editP, BorderLayout.NORTH);
 		add(projView, BorderLayout.SOUTH);
 		pack();
 	}
+	public MainScreen()
+	{
+		data = new TaskBoardModel();
+		setLayout(new BorderLayout());
+		projView = new ProjectView();
+		editP = new TaskBoardEditPanel(data, this);
+		data.attach(editP);
+		add(editP, BorderLayout.NORTH);
+		add(projView, BorderLayout.SOUTH);
+		pack();
+		
+	}
+	public void setData(TaskBoardModel _data)
+	{
+		data = _data;
+		//System.out.println(data==null);
+		data.attach(this);
+		editP.setData(data);
+		data.notifyViews();
+		updateSelectedView();
+	}
 	public static void main(String[] args)
 	{
-		ProjectModel c = new ProjectModel("Test");
+		//ProjectModel c = new ProjectModel("Test");
 		//c.addTask(new TaskModel("Do Entire Project", new GregorianCalendar(), "In this case, if parent was red, then we didn’t need to recur for prent, we can simply make it black (red + double black = single black)", "Done"), "Done");
 		//c.addTask(new TaskModel("Do Entire Project2", new GregorianCalendar(), "In this case, if parent was red, then we didn’t need to recur for prent, we can simply make it black (red + double black = single black)", "Done"), "Done");
-		TaskBoardModel d = new TaskBoardModel();
-		d.addProject(c);
-		MainScreen view = new MainScreen(d);
+		//TaskBoardModel d = new TaskBoardModel();
+		//d.addProject(c);
+		MainScreen view = new MainScreen();
 		view.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		view.setVisible(true);
 		//c.clearView();
@@ -82,6 +101,11 @@ public class MainScreen extends JFrame implements ViewInterface{
 class TaskBoardEditPanel extends JPanel implements ViewInterface
 {
 	private TaskBoardModel data;
+	public void setData(TaskBoardModel _data)
+	{
+		data = _data;
+		data.attach(this);
+	}
 	private MainScreen parentScr;
 	private JButton createNewB;
 	private JButton editB;
@@ -101,9 +125,10 @@ class TaskBoardEditPanel extends JPanel implements ViewInterface
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				if (data.getSelectedModel()!=null){
 				ProjectEditView d = new ProjectEditView(data.getSelectedModel());
 				d.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-				d.setVisible(true);
+				d.setVisible(true);}
 			}
 		});
 		createNewB = new JButton("Create New Project");
@@ -123,12 +148,42 @@ class TaskBoardEditPanel extends JPanel implements ViewInterface
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fc = new JFileChooser();
-				fc.showOpenDialog(parentScr);
-				//File selected = fc.getSelectedFile();
-				//System.out.println(selected.getAbsolutePath());
+				int val = fc.showSaveDialog(parentScr);
+				
+				if (val == JFileChooser.APPROVE_OPTION)
+				{
+					File selected = fc.getSelectedFile();
+					try {
+						TaskFileManager.saveToFile(data, selected);
+					} catch (FileNotFoundException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
 			}
 		});
 		loadB = new JButton("load");
+		loadB.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser fc = new JFileChooser();
+				int val = fc.showOpenDialog(parentScr);
+				
+				if (val== JFileChooser.APPROVE_OPTION)
+				{
+					File selected = fc.getSelectedFile();
+					try{
+					TaskBoardModel data = TaskFileManager.readFromFile(selected);
+					parentScr.setData(data);
+					}
+					catch (FileNotFoundException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+			}
+		});
 		sectionCB = new JComboBox<>();
 		sectionCB.addActionListener(new ActionListener() {
 			
@@ -138,7 +193,7 @@ class TaskBoardEditPanel extends JPanel implements ViewInterface
 					
 					@Override
 					public void run() {
-						data.setSelected(sectionCB.getSelectedIndex());
+						data.setSelectedIndex(sectionCB.getSelectedIndex());
 						if (sectionCB.getSelectedIndex()>=0)
 						{
 							//parentScr.getProjectView().updateSelected(data.getSelectedModel());
@@ -153,7 +208,10 @@ class TaskBoardEditPanel extends JPanel implements ViewInterface
 		{
 			sectionCB.addItem(c.getName());
 		}
-		sectionCB.setSelectedIndex(0);
+		if (sectionCB.getItemCount() > 0)
+		{
+			sectionCB.setSelectedIndex(0);
+		}
 		setLayout(new FlowLayout());
 		add(sectionCB);
 		add(saveB);
@@ -170,7 +228,7 @@ class TaskBoardEditPanel extends JPanel implements ViewInterface
 			@Override
 			public void run() {
 				//System.out.println(data.getProjectList().size());
-				System.out.println("RUN!!!");
+				//System.out.println("RUN!!!");
 				sectionCB.removeAllItems();
 				System.out.println();
 				for (ProjectModel c : data)
