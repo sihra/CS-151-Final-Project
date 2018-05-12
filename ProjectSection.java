@@ -3,7 +3,7 @@ import java.util.TreeSet;
 
 /**
  * A class used to represent a section of tasks in a project, graphically
- * this would be a column on the project view. The sections correspond with the task's status
+ * this would be a column on the project view.
  * @author Zackary Finer
  *
  */
@@ -11,10 +11,14 @@ public class ProjectSection implements Iterable<TaskModel> {
 	
 	/** The list of tasks in this section, sorted in order of start date */
 	private TreeSet<TaskModel> list;
-	
+	public TreeSet<TaskModel> getList() {
+		return list;
+	}
+	public void setList(TreeSet<TaskModel> list) {
+		this.list = list;
+	}
 	/** A string title associated with this section */
 	private String title;
-	
 	/**
 	 * Default constructor for project section object
 	 * @param title - String title to be associated with this section
@@ -32,11 +36,6 @@ public class ProjectSection implements Iterable<TaskModel> {
 	{
 		list.add(t);
 	}
-	
-	//***** use a hashset instead??
-	/** 
-	 * Method that takes out duplicates of the same task from the section itself
-	 */
 	public void updateTask()
 	{
 		TreeSet<TaskModel> temp = new TreeSet<>();
@@ -65,10 +64,6 @@ public class ProjectSection implements Iterable<TaskModel> {
 	{
 		return list.size();
 	}
-	public TreeSet<TaskModel> getList(){
-		return list;
-	}
-	
 	/**
 	 * Returns the title of this section
 	 * @return String of the title of this section
@@ -76,6 +71,10 @@ public class ProjectSection implements Iterable<TaskModel> {
 	public String getTitle()
 	{
 		return title;
+	}
+	public void setTitle(String newTitle)
+	{
+		title =  newTitle;
 	}
 	@Override
 	public Iterator<TaskModel> iterator() {

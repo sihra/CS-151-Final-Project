@@ -1,39 +1,23 @@
-import java.util.ArrayList;
+import javax.swing.JFrame;
 
 public class ProjectController {
 	ProjectModel model;
-
 	public ProjectController(ProjectModel _model) {
 		this.model = _model;
 	}
-
-	public void addColumn(String s) {
+	public void addColumn(String s)
+	{
 		model.addSection(new ProjectSection(s));
 	}
-
-	public void addTask(String s, TaskModel n) {
+	public void addTask(String s, TaskModel n)
+	{
 		model.addTask(n, s);
+		TaskView editTask = new TaskView(n, true, this);
+		editTask.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		editTask.setVisible(true);
 	}
-
-	public ArrayList<ProjectSection> getSections() {
-		return model.getSections();
-	}
-
-	public int getCount() {
-		return model.count();
-	}
-
-	public void updateTask(String s) {
+	public void updateTask(String s)
+	{
 		model.updateTask(s);
-	}
-
-	public ProjectSection getStatus(TaskModel t) {
-		return model.getStatus(t);
-	}
-	
-	public void transferTask(Object t, Object sec2) {
-		TaskModel task = (TaskModel)t;
-		String name = (String)sec2;
-		model.transferTask(task, name);
 	}
 }

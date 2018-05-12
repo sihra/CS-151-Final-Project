@@ -14,10 +14,16 @@ public class ProjectModel implements Iterable<ProjectSection> {
 	 * order is preserved, and they can be divided up into different sections.
 	 * One idea could be to use a double array
 	 */
+	private String name;
 	private ArrayList<ViewInterface> views = new ArrayList<>();
 	/** the list of sections contained in this project, default will contain 4 sections */
-	private ArrayList<ProjectSection> sections; // Status of the task
-	
+	private ArrayList<ProjectSection> sections;
+	public ArrayList<ProjectSection> getSections() {
+		return sections;
+	}
+	public void setSections(ArrayList<ProjectSection> sections) {
+		this.sections = sections;
+	}
 	/**
 	 * Default constructor for project model objects, takes no parameters and
 	 * initializes the section to contain todo, inprogress, review, and done
@@ -30,16 +36,10 @@ public class ProjectModel implements Iterable<ProjectSection> {
 		sections.add(new ProjectSection("Review"));
 		sections.add(new ProjectSection("Done"));
 	}
-	
-	/**
-	 * Method that attaches a View class to a ProjectModel
-	 * @param view - View class to be added
-	 */
 	public void attach(ViewInterface view)
 	{
 		views.add(view);
 	}
-	
 	/**
 	 * Adds a task to an associated section in the project model.
 	 * @param t - TaskModel to be added to this project model
@@ -88,19 +88,9 @@ public class ProjectModel implements Iterable<ProjectSection> {
 	 * @param sec2 - String of the title of the section the task will be transfered to
 	 * @param TaskModel - The task object to be transfered
 	 */
-	public void transferTask(TaskModel t, String sec2)
+	public void transferTask(String sec1, String sec2, TaskModel t)
 	{
 		//TODO: implement me, gotta find an associated section, and another, then find the task
-		ProjectSection replace = getStatus(t);
-		for(ProjectSection section : sections) {
-			if(section.getTitle().equals(sec2)) {
-				replace.remove(t);
-				section.addTask(t);
-				notifyViews();
-				break;
-			}
-		}
-		
 	}
 	@Override
 	public Iterator<ProjectSection> iterator() {
@@ -116,20 +106,9 @@ public class ProjectModel implements Iterable<ProjectSection> {
 		}
 		return false;
 	}
-	public ArrayList<ProjectSection> getSections(){
-		return sections;
-	}
 	public int count()
 	{
 		return sections.size();
-	}
-	public ProjectSection getStatus(TaskModel t) {
-		for(ProjectSection section : sections) {
-			if(section.getList().contains(t)) {
-				return section;
-			}
-		}
-		return null;
 	}
 	public void notifyViews()
 	{
