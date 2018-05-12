@@ -15,6 +15,13 @@ public class TaskModel implements Comparable<TaskModel>, Cloneable{
 	public void setCategory(String category) {
 		this.category = category;
 	}
+	public TaskModel()
+	{
+		this.name = "New Task";
+		this.end = new GregorianCalendar();
+		this.text = "";
+		this.category = "TODO";
+	}
 	public TaskModel(String name, GregorianCalendar end, String text, String category)
 	{
 		this.name = name;

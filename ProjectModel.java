@@ -14,9 +14,16 @@ public class ProjectModel implements Iterable<ProjectSection> {
 	 * order is preserved, and they can be divided up into different sections.
 	 * One idea could be to use a double array
 	 */
+	private String name;
 	private ArrayList<ViewInterface> views = new ArrayList<>();
 	/** the list of sections contained in this project, default will contain 4 sections */
 	private ArrayList<ProjectSection> sections;
+	public ArrayList<ProjectSection> getSections() {
+		return sections;
+	}
+	public void setSections(ArrayList<ProjectSection> sections) {
+		this.sections = sections;
+	}
 	/**
 	 * Default constructor for project model objects, takes no parameters and
 	 * initializes the section to contain todo, inprogress, review, and done

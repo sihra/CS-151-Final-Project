@@ -1,3 +1,4 @@
+import javax.swing.JFrame;
 
 public class ProjectController {
 	ProjectModel model;
@@ -11,6 +12,9 @@ public class ProjectController {
 	public void addTask(String s, TaskModel n)
 	{
 		model.addTask(n, s);
+		TaskView editTask = new TaskView(n, true, this);
+		editTask.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		editTask.setVisible(true);
 	}
 	public void updateTask(String s)
 	{
