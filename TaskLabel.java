@@ -17,7 +17,7 @@ import javax.swing.event.MouseInputListener;
 
 /**
  * The purpose of this class is to provide instructions for the graphical representation of a task
- * in the project view.
+ * in the project view. 
  * @author Zackary Finer
  *
  */
@@ -25,32 +25,27 @@ public class TaskLabel extends JTextArea implements ViewInterface{
 	private static final String propertyName = "Task";
 	public static final int DEFAULT_WIDTH = 100;
 	public static final int DEFAULT_HEIGHT = 100;
-	private TaskModel data;//reference to the task this label is displying
-	private String text;
-	private ProjectController controller;
+	private TaskModel data; //reference to the TaskModel of the current task this label is displaying
+	private String text; // Any text to be shown on screen
+	private ProjectController controller; // ProjectController object to
 	private boolean isHighlighted = false;
+	
 	public TaskLabel(TaskModel data, ProjectController caller)
 	{
 		controller = caller;
-		setEditable(false);
-		//setBackground(Color.BLUE);
-		setLineWrap(true);
-		setWrapStyleWord(true);
-		/*
-		setTransferHandler(new TransferHandler(propertyName));
-		addMouseMotionListener(new MouseAdapter() {
-		      public void mousePressed(MouseEvent evt) {
-		          JComponent comp = (JComponent) evt.getSource();
-		          TransferHandler th = comp.getTransferHandler();
+		setEditable(false); // Setter method for the JTextArea declaring it non editable
+		setBackground(Color.YELLOW); // Background color of the TextArea for the column itself
+		setLineWrap(true); // Keeps the task in a closed rectangle space
+		setWrapStyleWord(true); // Keeps words in the text area together
 
-		          th.exportAsDrag(comp, evt, TransferHandler.COPY);
-		        }
-		});
-		*/
+		// Creates and attaches a Mouse Listener to the label for this task, "listening" to if the task itself is clicked 
 		addMouseListener(new MouseAdapter() {
 			@Override
+			// Translates to if the mouse is clicked on the task
 			public void mousePressed(MouseEvent evt){
+				// A TaskView is created for the task itself
 				TaskView c = new TaskView(data, false, controller);
+				// Closes the mouse when the window is closed
 				c.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 				c.setVisible(true);
 			}
@@ -58,6 +53,7 @@ public class TaskLabel extends JTextArea implements ViewInterface{
 		this.data = data;
 		this.data.attach(this);
 		//setPreferredSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
+		// Updates everything viewable
 		update();
 	}
 	private String parseDate()

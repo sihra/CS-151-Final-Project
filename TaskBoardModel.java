@@ -7,12 +7,6 @@ import java.util.ArrayList;
  */
 public class TaskBoardModel {
 	private ArrayList<ProjectModel> projectList;
-	public ArrayList<ProjectModel> getProjectList() {
-		return projectList;
-	}
-	public void setProjectList(ArrayList<ProjectModel> projectList) {
-		this.projectList = projectList;
-	}
 	private ArrayList<ViewInterface> views= new ArrayList<>();
 	/**
 	 * Adds a project to the list of projects in this task board model
