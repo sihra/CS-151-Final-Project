@@ -2,7 +2,10 @@ import java.util.ArrayList;
 
 public class ProjectController {
 	ProjectModel model;
-
+	public ProjectModel getModel()
+	{
+		return model;
+	}
 	public ProjectController(ProjectModel _model) {
 		this.model = _model;
 	}

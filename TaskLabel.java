@@ -1,4 +1,5 @@
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.event.MouseEvent;
@@ -30,7 +31,7 @@ public class TaskLabel extends JTextArea implements ViewInterface{
 	private ProjectController controller; // ProjectController object to
 	private boolean isHighlighted = false;
 	
-	public TaskLabel(TaskModel data, ProjectController caller)
+	public TaskLabel(TaskModel data, ProjectController caller, DragListener d)
 	{
 		controller = caller;
 		setEditable(false); // Setter method for the JTextArea declaring it non editable
@@ -39,22 +40,28 @@ public class TaskLabel extends JTextArea implements ViewInterface{
 		setWrapStyleWord(true); // Keeps words in the text area together
 
 		// Creates and attaches a Mouse Listener to the label for this task, "listening" to if the task itself is clicked 
+		
 		addMouseListener(new MouseAdapter() {
 			@Override
 			// Translates to if the mouse is clicked on the task
 			public void mousePressed(MouseEvent evt){
 				// A TaskView is created for the task itself
+				if (SwingUtilities.isRightMouseButton(evt))
+				{
 				TaskView c = new TaskView(data, false, controller);
 				// Closes the mouse when the window is closed
 				c.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 				c.setVisible(true);
+				}
 			}
 		});
+		//addMouseListener(new LabelDragListener(this, controller));
 		this.data = data;
 		this.data.attach(this);
 		//setPreferredSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
 		// Updates everything viewable
 		update();
+		addMouseListener(d);
 	}
 	private String parseDate()
 	{
@@ -87,6 +94,9 @@ public class TaskLabel extends JTextArea implements ViewInterface{
 				
 			}
 		});
-
+	}
+	public TaskModel getModel()
+	{
+		return data;
 	}
 }

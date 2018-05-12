@@ -1,10 +1,15 @@
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.GridLayout;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
 import javax.swing.Box;
@@ -15,6 +20,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+
+
 
 public class ProjectView extends JPanel implements ViewInterface{
 /*
@@ -28,17 +36,19 @@ public class ProjectView extends JPanel implements ViewInterface{
 		private ProjectController parent;
 		private JScrollPane scroller;
 		private JPanel taskView;
+		private DragListener dListener;
 		private int count;
-		public ColumnView(ProjectSection _model, ProjectController _parent)
+		public ColumnView(ProjectSection _model, ProjectController _parent, DragListener d)
 		{
 			model = _model;
 			parent = _parent;
 			taskView = new JPanel();
+			dListener = d;
 			taskView.setLayout(new BoxLayout(taskView, BoxLayout.Y_AXIS));
 			
 			for(TaskModel c : model)
 			{
-				taskView.add(new TaskLabel(c, controller));
+				taskView.add(new TaskLabel(c, controller, dListener));
 				taskView.add(Box.createRigidArea(new Dimension(V_SPACING,V_SPACING)));
 				count++;
 			}
@@ -58,6 +68,7 @@ public class ProjectView extends JPanel implements ViewInterface{
 			add(new JLabel(model.getTitle()));
 			add(scroller);
 			add(addTaskB);
+			addMouseListener(d);
 			
 		}
 		public void update()
@@ -72,7 +83,7 @@ public class ProjectView extends JPanel implements ViewInterface{
 				taskView.removeAll();
 				for(TaskModel c : model)
 				{
-					taskView.add(new TaskLabel(c, controller));
+					taskView.add(new TaskLabel(c, controller,dListener));
 					taskView.add(Box.createRigidArea(new Dimension(V_SPACING,V_SPACING)));
 					count++;
 				}
@@ -98,16 +109,19 @@ public class ProjectView extends JPanel implements ViewInterface{
 	private ProjectModel data;
 	private JPanel taskColumns;
 	private JScrollPane taskScroller;
+	private DragListener dListener;
 	private int count;
 	public ProjectView(ProjectModel _data) {
+		dListener = new DragListener(this);
 		data = _data;
 		data.attach(this);
 		controller = new ProjectController(data);//the controller will designate methods for how to handle user input
+		
 		taskColumns = new JPanel();
 		taskColumns.setLayout(new BoxLayout(taskColumns, BoxLayout.X_AXIS));
 		for (ProjectSection c: data)
 		{
-			taskColumns.add(new ColumnView(c, controller));
+			taskColumns.add(new ColumnView(c, controller,dListener));
 			count++;
 		}
 		taskScroller = new JScrollPane(taskColumns, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -126,7 +140,18 @@ public class ProjectView extends JPanel implements ViewInterface{
 		buttons.add(addColumnB);
 		add(buttons);
 	}
-	
+	public ArrayList<ColumnView> getSections()
+	{
+		ArrayList<ColumnView> _return = new ArrayList<>();
+		for (int i = 0; i < this.getComponentCount(); i++)
+		{
+			if (this.getComponent(i) instanceof ColumnView)
+			{
+				_return.add((ColumnView)this.getComponent(i));
+			}
+		}
+		return _return;
+	}
 	public void update()
 	{
 		/*
@@ -146,7 +171,7 @@ public class ProjectView extends JPanel implements ViewInterface{
 				taskColumns.removeAll();
 				for (ProjectSection c: data)
 				{
-					taskColumns.add(new ColumnView(c, controller));
+					taskColumns.add(new ColumnView(c, controller, dListener));
 				}
 				taskColumns.revalidate();
 			}
@@ -159,4 +184,73 @@ public class ProjectView extends JPanel implements ViewInterface{
 	    }});
 
 	}
+	public ProjectController getController()
+	{
+		return controller;
+	}
+}
+class DragListener implements MouseListener {
+	ProjectView context;
+	Component source;
+	Component over;
+	String destination;
+	ArrayList<ProjectView.ColumnView> targetColumns;
+	public DragListener(ProjectView _context) {
+			context = _context;
+			targetColumns = context.getSections();
+	}
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		over = e.getComponent();
+		if (over.getClass().getName().equals("ProjectView$ColumnView"))
+		{
+			destination = ((ProjectView.ColumnView)over).getModel().getTitle();
+		}
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		source = e.getComponent();
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				
+				if (over instanceof ProjectView.ColumnView)
+				{
+					ProjectView.ColumnView c = (ProjectView.ColumnView) over;
+					if (c.getModel().getTitle()==destination)
+					{
+						if (source instanceof TaskLabel)
+						{
+							TaskModel t = ((TaskLabel)(source)).getModel();
+							context.getController().transferTask(t, destination);
+							
+						}
+					}
+					else
+					{
+						System.out.println("ERROR: TRANSFER LOCATION IS DIFFERENT");
+					}
+				}
+				
+			}
+		});
+
+		
+	}
+	
 }
