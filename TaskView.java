@@ -94,6 +94,7 @@ public class TaskView extends JFrame implements ViewInterface {
 			public void actionPerformed(ActionEvent e) {
 				options.setVisible(false);
 				infoPane.setVisible(false);
+				
 			}
 		});
 

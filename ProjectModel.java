@@ -17,14 +17,23 @@ public class ProjectModel implements Iterable<ProjectSection> {
 	private ArrayList<ViewInterface> views = new ArrayList<>();
 	/** the list of sections contained in this project, default will contain 4 sections */
 	private ArrayList<ProjectSection> sections; // Status of the task
-	
+	private String name;
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	/**
 	 * Default constructor for project model objects, takes no parameters and
 	 * initializes the section to contain todo, inprogress, review, and done
 	 */
-	public ProjectModel()
+	public ProjectModel(String _name)
 	{
 		sections = new ArrayList<>();
+		name = _name;
 		sections.add(new ProjectSection("TODO"));
 		sections.add(new ProjectSection("In-Progress"));
 		sections.add(new ProjectSection("Review"));

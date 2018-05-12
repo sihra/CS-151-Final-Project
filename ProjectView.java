@@ -56,7 +56,7 @@ public class ProjectView extends JPanel implements ViewInterface{
 			scroller = new JScrollPane(taskView, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 			//setLayout(new BorderLayout());
 			setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-			setPreferredSize(new Dimension(175, 400));
+			setPreferredSize(new Dimension(175, 500));
 			JButton addTaskB = new JButton("+");
 			addTaskB.addActionListener(new ActionListener() {
 				
@@ -115,6 +115,7 @@ public class ProjectView extends JPanel implements ViewInterface{
 		dListener = new DragListener(this);
 		data = _data;
 		data.attach(this);
+		setLayout(new BorderLayout());
 		controller = new ProjectController(data);//the controller will designate methods for how to handle user input
 		
 		taskColumns = new JPanel();
@@ -124,8 +125,8 @@ public class ProjectView extends JPanel implements ViewInterface{
 			taskColumns.add(new ColumnView(c, controller,dListener));
 			count++;
 		}
-		taskScroller = new JScrollPane(taskColumns, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		add(taskScroller);
+		taskScroller = new JScrollPane(taskColumns, JScrollPane.VERTICAL_SCROLLBAR_NEVER,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		add(taskScroller, BorderLayout.CENTER);
 		
 		JPanel buttons = new JPanel();
 		JTextField columnName = new JTextField(40);
@@ -138,7 +139,7 @@ public class ProjectView extends JPanel implements ViewInterface{
 		});
 		buttons.add(columnName);
 		buttons.add(addColumnB);
-		add(buttons);
+		add(buttons, BorderLayout.SOUTH);
 	}
 	public ArrayList<ColumnView> getSections()
 	{
@@ -151,6 +152,9 @@ public class ProjectView extends JPanel implements ViewInterface{
 			}
 		}
 		return _return;
+	}
+	public void updateSelected(ProjectModel data)
+	{
 	}
 	public void update()
 	{
@@ -181,6 +185,7 @@ public class ProjectView extends JPanel implements ViewInterface{
 				d.update();
 			}
 			revalidate();
+			repaint();
 	    }});
 
 	}

@@ -1,3 +1,4 @@
+import java.io.File;
 
 public class TaskBoardController {
 	/*
@@ -5,6 +6,10 @@ public class TaskBoardController {
 	 * 1. this is a controller class, it should not contain a list of project models,
 	 * instead it should use the taskboard model associated with it.
 	 */
+	public TaskBoardController(TaskBoardModel _model)
+	{
+		model = _model;
+	}
 	private TaskBoardModel model;
 	private MainScreen view;
 	private String taskBoardName;
@@ -32,11 +37,16 @@ public class TaskBoardController {
 	public ProjectModel loadProjectFromFile(String filePath)
 	{
 		//TODO: use file loader here
+		//return TaskFileManager.readFromFile(new File(filePath));
 		return null;
 	}
 	public void saveProjectsToFile(String filePath)
 	{
 		//TODO: use file loader here
+	}
+	public void setSelectedProject(int index)
+	{
+		model.setSelected(index);
 	}
 	public void update()
 	{

@@ -11,7 +11,7 @@ import java.io.IOException;
 public class TaskFileManager {
 	public TaskFileManager() {
 	}
-	public static void saveToFile(TaskBoardModel object, File output) throws FileNotFoundException
+	public static void saveToFile(ProjectSection object, File output) throws FileNotFoundException
 	{
 		FileOutputStream fo = new FileOutputStream(output);
 		BufferedOutputStream bo = new BufferedOutputStream(fo);
