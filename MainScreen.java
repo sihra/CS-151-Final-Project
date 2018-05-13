@@ -103,6 +103,7 @@ public class MainScreen extends JFrame implements ViewInterface{
 					pack();
 					setSize(500,500);
 					setMinimumSize(new Dimension(600,700));
+					setExtendedState(JFrame.MAXIMIZED_BOTH);
 				}
 				else
 				{

@@ -103,6 +103,11 @@ public class ProjectModel implements Iterable<ProjectSection> {
 		sections.add(s);
 		notifyViews();
 	}
+	public void removeSection(ProjectSection s)
+	{
+		sections.remove(s);
+		notifyViews();
+	}
 	public void clearView()
 	{
 		sections.clear();

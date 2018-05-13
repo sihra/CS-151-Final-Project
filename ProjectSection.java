@@ -87,6 +87,10 @@ public class ProjectSection implements Iterable<TaskModel> {
 	{
 		return title;
 	}
+	public String toString()
+	{
+		return title;
+	}
 	@Override
 	public Iterator<TaskModel> iterator() {
 		// TODO Auto-generated method stub
