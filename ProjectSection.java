@@ -12,9 +12,19 @@ public class ProjectSection implements Iterable<TaskModel> {
 	/** The list of tasks in this section, sorted in order of start date */
 	private TreeSet<TaskModel> list;
 	
+	public void setList(TreeSet<TaskModel> list) {
+		this.list = list;
+	}
+	public void setTitle(String title) {
+		this.title = title;
+	}
 	/** A string title associated with this section */
 	private String title;
-	
+	public ProjectSection()
+	{
+		this.title = "";
+		list = new TreeSet<>();
+	}
 	/**
 	 * Default constructor for project section object
 	 * @param title - String title to be associated with this section
@@ -74,6 +84,10 @@ public class ProjectSection implements Iterable<TaskModel> {
 	 * @return String of the title of this section
 	 */
 	public String getTitle()
+	{
+		return title;
+	}
+	public String toString()
 	{
 		return title;
 	}

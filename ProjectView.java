@@ -1,6 +1,7 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.GridLayout;
@@ -9,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
@@ -17,6 +19,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -62,7 +65,7 @@ public class ProjectView extends JPanel implements ViewInterface{
 				
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
-					parent.addTask(model.getTitle(), new TaskModel(("Task " + data.taskCount()), new GregorianCalendar(), "",model.getTitle()));
+					parent.addTask(model.getTitle(), new TaskModel("New Task", new GregorianCalendar(), "",model.getTitle()));
 				}
 			});
 			add(new JLabel(model.getTitle()));
@@ -112,6 +115,10 @@ public class ProjectView extends JPanel implements ViewInterface{
 	private DragListener dListener;
 	private int count;
 	
+	public ProjectView()
+	{
+		//do nothing if there isn't any content to add
+	}
 	public ProjectView(ProjectModel _data) {
 		dListener = new DragListener(this);
 		data = _data;
@@ -135,7 +142,14 @@ public class ProjectView extends JPanel implements ViewInterface{
 //		addColumnB.addActionListener(new ActionListener() {
 //			@Override
 //			public void actionPerformed(ActionEvent e) {
-//				controller.addColumn(columnName.getText());
+//				if (columnName.getText()!=null && columnName.getText().length()>0)
+//				{
+//					controller.addColumn(columnName.getText());
+//				}
+//				else
+//				{
+//					JOptionPane.showMessageDialog(null, "Please insert a name for the column");
+//				}
 //			}
 //		});
 //		buttons.add(columnName);
@@ -167,6 +181,8 @@ public class ProjectView extends JPanel implements ViewInterface{
 		 */
 		ProjectView exterior = this;
 		EventQueue.invokeLater(new Runnable() { public void run() {
+			if (data!=null)
+			{
 			if (data.count()!=count)
 			{
 				count = 0;
@@ -183,6 +199,8 @@ public class ProjectView extends JPanel implements ViewInterface{
 				d.update();
 			}
 			revalidate();
+			
+			}
 			repaint();
 	    }});
 
@@ -192,11 +210,13 @@ public class ProjectView extends JPanel implements ViewInterface{
 		return controller;
 	}
 }
-class DragListener implements MouseListener {
+class DragListener implements MouseListener, MouseMotionListener {
 	ProjectView context;
 	Component source;
 	Component over;
+	Color componentC;
 	String destination;
+	boolean isHolding;
 	ArrayList<ProjectView.ColumnView> targetColumns;
 	public DragListener(ProjectView _context) {
 			context = _context;
@@ -213,17 +233,37 @@ class DragListener implements MouseListener {
 		over = e.getComponent();
 		if (over.getClass().getName().equals("ProjectView$ColumnView"))
 		{
-			destination = ((ProjectView.ColumnView)over).getModel().getTitle();
+			ProjectView.ColumnView c = (ProjectView.ColumnView)over;
+			destination = c.getModel().getTitle();
+			if (isHolding)
+			{
+				componentC = c.getBackground();
+				c.setBackground(Color.gray);
+			}
 		}
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
+		if (over.getClass().getName().equals("ProjectView$ColumnView"))
+		{
+			e.getComponent().setBackground(componentC);
+		}
+		if (isHolding==false)
+		{
+			over=null;
+		}
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
 		source = e.getComponent();
+		if (source instanceof TaskLabel)
+		{
+			source.setBackground(Color.green);
+		}
+		
+		isHolding = true;
 	}
 
 	@Override
@@ -231,8 +271,8 @@ class DragListener implements MouseListener {
 		EventQueue.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				
-				if (over instanceof ProjectView.ColumnView)
+				source.setBackground(((TaskLabel)source).getTaskColor());
+				if (over!= null && over instanceof ProjectView.ColumnView)
 				{
 					ProjectView.ColumnView c = (ProjectView.ColumnView) over;
 					if (c.getModel().getTitle()==destination)
@@ -250,9 +290,19 @@ class DragListener implements MouseListener {
 					}
 				}
 				
+				isHolding = false;
 			}
 		});
 
+		
+	}
+	@Override
+	public void mouseDragged(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void mouseMoved(MouseEvent arg0) {
 		
 	}
 	
