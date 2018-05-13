@@ -62,7 +62,7 @@ public class ProjectView extends JPanel implements ViewInterface{
 				
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
-					parent.addTask(model.getTitle(), new TaskModel("New Task", new GregorianCalendar(), "",model.getTitle()));
+					parent.addTask(model.getTitle(), new TaskModel(("Task " + data.taskCount()), new GregorianCalendar(), "",model.getTitle()));
 				}
 			});
 			add(new JLabel(model.getTitle()));
@@ -111,10 +111,6 @@ public class ProjectView extends JPanel implements ViewInterface{
 	private JScrollPane taskScroller;
 	private DragListener dListener;
 	private int count;
-	public ProjectView()
-	{
-		//do nothing if there isn't any content to add
-	}
 	public ProjectView(ProjectModel _data) {
 		dListener = new DragListener(this);
 		data = _data;
@@ -132,18 +128,18 @@ public class ProjectView extends JPanel implements ViewInterface{
 		taskScroller = new JScrollPane(taskColumns, JScrollPane.VERTICAL_SCROLLBAR_NEVER,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		add(taskScroller, BorderLayout.CENTER);
 		
-		JPanel buttons = new JPanel();
-		JTextField columnName = new JTextField(40);
-		JButton addColumnB = new JButton("Add Column");
-		addColumnB.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				controller.addColumn(columnName.getText());
-			}
-		});
-		buttons.add(columnName);
-		buttons.add(addColumnB);
-		add(buttons, BorderLayout.SOUTH);
+//		JPanel buttons = new JPanel();
+//		JTextField columnName = new JTextField(40);
+//		JButton addColumnB = new JButton("Add Column");
+//		addColumnB.addActionListener(new ActionListener() {
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//				controller.addColumn(columnName.getText());
+//			}
+//		});
+//		buttons.add(columnName);
+//		buttons.add(addColumnB);
+//		add(buttons, BorderLayout.SOUTH);
 	}
 	public ArrayList<ColumnView> getSections()
 	{
@@ -170,8 +166,6 @@ public class ProjectView extends JPanel implements ViewInterface{
 		 */
 		ProjectView exterior = this;
 		EventQueue.invokeLater(new Runnable() { public void run() {
-			if (data!=null)
-			{
 			if (data.count()!=count)
 			{
 				count = 0;
@@ -189,7 +183,6 @@ public class ProjectView extends JPanel implements ViewInterface{
 			}
 			revalidate();
 			repaint();
-			}
 	    }});
 
 	}

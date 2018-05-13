@@ -18,6 +18,7 @@ public class ProjectEditView extends JFrame implements ViewInterface{
 	private JButton okB;
 	private DefaultListModel<ProjectSection> sectionListModel;
 	private JScrollPane sectionListScroller;
+	
 	public ProjectEditView(ProjectModel data) {
 		this.data = data;
 		titleField = new JTextField(data.getName());

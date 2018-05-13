@@ -9,30 +9,13 @@ import java.util.Iterator;
 public class TaskBoardModel implements Iterable<ProjectModel>{
 	
 	private ArrayList<ProjectModel> projectList;
-	private Integer selectedIndex = new Integer(0);
-	
-	public void setSelectedIndex(Integer selectedIndex) {
-		this.selectedIndex = selectedIndex;
-	}
-	public Integer getSelectedIndex()
-	{
-		return selectedIndex;
-	}
+	private int selectedIndex;
 	public ArrayList<ProjectModel> getProjectList() {
 		return projectList;
 	}
 	public void setProjectList(ArrayList<ProjectModel> projectList) {
 		this.projectList = projectList;
 	}
-	private boolean isDirty = false;
-	public boolean isDirty() {
-		return isDirty;
-	}
-
-	public void setDirty(boolean isDirty) {
-		this.isDirty = isDirty;
-	}
-
 	private ArrayList<ViewInterface> views= new ArrayList<>();
 	private TaskBoardController controller;
 	/**
@@ -55,26 +38,28 @@ public class TaskBoardModel implements Iterable<ProjectModel>{
 	}
 	public ProjectModel getSelectedModel()
 	{
-		if (projectList.size()>0)
-		{
-			return projectList.get(selectedIndex);
-		}
-		else
-		{
-			return null;
-		}
+		return projectList.get(selectedIndex);
 	}
 	public void notifyViews()
 	{
-		isDirty = true;
+		System.out.println("TaskBoard update was run");
 		for (ViewInterface c : views)
 		{
 			c.update();
 		}
 	}
-	public void setSelectedIndex(int _index)
+	public void setSelected(int _index) throws IndexOutOfBoundsException
 	{
-		selectedIndex = _index;
+		if (_index < projectList.size())
+		{
+			selectedIndex = _index;
+			
+		}
+		else
+		{
+			throw new IndexOutOfBoundsException();
+		}
+		
 	}
 	@Override
 	public Iterator iterator() {
