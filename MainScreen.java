@@ -1,4 +1,5 @@
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -11,63 +12,16 @@ import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.SpringLayout;
 
 
 public class MainScreen extends JFrame implements ViewInterface{
 	private ProjectView projView;
 	private TaskBoardEditPanel editP;
-	public void setLoggedIn(boolean b)
-	{
-		MainScreen ext = this;
-		EventQueue.invokeLater(new Runnable() {
-			
-			@Override
-			public void run() {
-				ext.getContentPane().removeAll();
-				if (b)
-				{
-					data = new TaskBoardModel();
-					setLayout(new BorderLayout());
-					projView = new ProjectView();
-					editP = new TaskBoardEditPanel(data, ext);
-					data.attach(editP);
-					add(editP, BorderLayout.NORTH);
-					add(projView, BorderLayout.SOUTH);
-					pack();
-				}
-				else
-				{
-					LoginView lc = new LoginView();
-					lc.setParent(ext);
-					setLayout(new BorderLayout());
-					getContentPane().add(lc, BorderLayout.CENTER);
-					revalidate();
-					repaint();
-					pack();
-				}
-			}
-		});
-
-	}
+	private SpringLayout layout;
 	public ProjectView getProjectView()
 	{
 		return projView;
-	}
-	public void  updateSelectedView()
-	{
-		EventQueue.invokeLater(new Runnable() {
-			
-			@Override
-			public void run() {
-				remove(projView);
-				projView = new ProjectView(data.getSelectedModel());
-				add(projView, BorderLayout.SOUTH);
-				revalidate();
-				pack();
-			}
-		});
-		
-		
 	}
 	private TaskBoardView tBView;
 	private TaskBoardModel data;
@@ -85,10 +39,87 @@ public class MainScreen extends JFrame implements ViewInterface{
 		editP = new TaskBoardEditPanel(_data, this);
 		add(editP, BorderLayout.NORTH);
 		add(projView, BorderLayout.SOUTH);
-		pack();
+		//pack();
+	}
+	public void  updateSelectedView()
+	{
+		MainScreen ext = this;
+		EventQueue.invokeLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				remove(projView);
+				layout.removeLayoutComponent(projView);
+				projView = new ProjectView(data.getSelectedModel());
+				layout.putConstraint(SpringLayout.NORTH, projView, 0, SpringLayout.SOUTH, editP);
+				layout.putConstraint(SpringLayout.SOUTH, projView, 0, SpringLayout.SOUTH, ext.getContentPane());
+				//layout.putConstraint(SpringLayout.WEST, ext.getContentPane(), 0, SpringLayout.WEST, projView);
+				//layout.putConstraint(SpringLayout.EAST, ext.getContentPane(), 0, SpringLayout.EAST, projView);
+				layout.putConstraint(SpringLayout.WEST, projView, 0, SpringLayout.WEST, ext.getContentPane());
+				layout.putConstraint(SpringLayout.EAST, projView, 0, SpringLayout.EAST, ext.getContentPane());
+				//layout.putConstraint(SpringLayout.WEST, ext.getContentPane(), 0, SpringLayout.WEST, projView);
+				//layout.putConstraint(SpringLayout.EAST, ext.getContentPane(), 0, SpringLayout.EAST, projView);
+				add(projView);
+				revalidate();
+				//pack();
+			}
+		});
+	}
+	public void setLoggedIn(boolean b)
+	{
+		MainScreen ext = this;
+		EventQueue.invokeLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				
+				ext.getContentPane().removeAll();
+				if (b)
+				{
+					data = new TaskBoardModel();
+					setLayout(new BorderLayout());
+					projView = new ProjectView();
+					editP = new TaskBoardEditPanel(data, ext);
+					data.attach(editP);
+					layout = new SpringLayout();
+					setLayout(layout);
+					layout.putConstraint(SpringLayout.NORTH, editP, 0, SpringLayout.NORTH, ext.getContentPane());
+					layout.putConstraint(SpringLayout.WEST, editP, 0, SpringLayout.WEST, ext.getContentPane());
+					layout.putConstraint(SpringLayout.EAST, editP, 0, SpringLayout.EAST, ext.getContentPane());
+					//layout.putConstraint(SpringLayout.WEST, ext.getContentPane(), 0, SpringLayout.WEST, editP);
+					//layout.putConstraint(SpringLayout.EAST, ext.getContentPane(), 0, SpringLayout.EAST, editP);
+					layout.preferredLayoutSize(ext);
+					//layout.putConstraint(SpringLayout.SOUTH, editP, 50, SpringLayout.NORTH, ext.getContentPane());
+					
+					layout.putConstraint(SpringLayout.NORTH, projView, 50, SpringLayout.NORTH, ext.getContentPane());
+					layout.putConstraint(SpringLayout.SOUTH, projView, 0, SpringLayout.SOUTH, ext.getContentPane());
+					//layout.putConstraint(SpringLayout.WEST, projView, 0, SpringLayout.WEST, ext.getContentPane());
+					//layout.putConstraint(SpringLayout.EAST, projView, 0, SpringLayout.EAST, ext.getContentPane());
+					//layout.putConstraint(SpringLayout.WEST, ext.getContentPane(), 0, SpringLayout.WEST, projView);
+					//layout.putConstraint(SpringLayout.EAST, ext.getContentPane(), 0, SpringLayout.EAST, projView);
+					
+					getContentPane().add(editP);
+					getContentPane().add(projView);
+					pack();
+					setSize(500,500);
+					setMinimumSize(new Dimension(600,700));
+				}
+				else
+				{
+					LoginView lc = new LoginView();
+					lc.setParent(ext);
+					setLayout(new BorderLayout());
+					getContentPane().add(lc, BorderLayout.CENTER);
+					revalidate();
+					repaint();
+					//pack();
+				}
+			}
+		});
 	}
 	public MainScreen()
 	{
+		setSize(500,500);
 		setLoggedIn(false);
 	}
 	public void setData(TaskBoardModel _data)
