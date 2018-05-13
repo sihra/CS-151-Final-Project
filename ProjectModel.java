@@ -14,21 +14,12 @@ public class ProjectModel implements Iterable<ProjectSection> {
 	 * order is preserved, and they can be divided up into different sections.
 	 * One idea could be to use a double array
 	 */
-	private boolean isDirty = false;
-	public boolean isDirty() {
-		return isDirty;
-	}
-
-	public void setDirty(boolean isDirty) {
-		this.isDirty = isDirty;
-	}
 	private ArrayList<ViewInterface> views = new ArrayList<>();
 	/** the list of sections contained in this project, default will contain 4 sections */
 	private ArrayList<ProjectSection> sections; // Status of the task
-	public void setSections(ArrayList<ProjectSection> sections) {
-		this.sections = sections;
-	}
 	private String name;
+	private int taskCount = 1;
+	
 	public String getName() {
 		return name;
 	}
@@ -42,11 +33,6 @@ public class ProjectModel implements Iterable<ProjectSection> {
 	 * Default constructor for project model objects, takes no parameters and
 	 * initializes the section to contain todo, inprogress, review, and done
 	 */
-	public ProjectModel()
-	{
-		sections = new ArrayList<>();
-		name = "";
-	}
 	public ProjectModel(String _name)
 	{
 		sections = new ArrayList<>();
@@ -74,6 +60,8 @@ public class ProjectModel implements Iterable<ProjectSection> {
 	 */
 	public void addTask(TaskModel t, String section) throws NoSuchElementException
 	{
+		t.setNumber(taskCount);
+		taskCount++;
 		for (int i = 0; i < sections.size(); i++)//search for the right section
 		{
 			if (sections.get(i).getTitle().toLowerCase().equals(section.toLowerCase()))//if we find it
@@ -101,11 +89,6 @@ public class ProjectModel implements Iterable<ProjectSection> {
 	public void addSection(ProjectSection s)
 	{
 		sections.add(s);
-		notifyViews();
-	}
-	public void removeSection(ProjectSection s)
-	{
-		sections.remove(s);
 		notifyViews();
 	}
 	public void clearView()
@@ -162,9 +145,12 @@ public class ProjectModel implements Iterable<ProjectSection> {
 		}
 		return null;
 	}
+	public int taskCount() {
+		return taskCount;
+	}
 	public void notifyViews()
 	{
-		isDirty = true;
+		System.out.println("Project update was run");
 		for (ViewInterface c : views)
 		{
 			c.update();

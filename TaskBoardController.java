@@ -50,50 +50,16 @@ public class TaskBoardController {
 	public void saveProjectsToFile(File location, TaskBoardModel c)
 	{
 		//TODO: use file loader here
-		
 		try {
-			c.getController().markClean();
 			TaskFileManager.saveToFile(c, location);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 	}
 	public void setSelectedProject(int index)
 	{
-		model.setSelectedIndex(index);
-	}
-	public boolean needSave()
-	{
-		boolean decision = model.isDirty();
-		for (ProjectModel a : model)
-		{
-			decision = decision || a.isDirty();
-			for (ProjectSection b: a)
-			{
-				for (TaskModel c : b)
-				{
-					decision = decision || c.isDirty();
-				}
-			}
-		}
-		return decision;
-	}
-	private void markClean()
-	{
-		for (ProjectModel a : model)
-		{
-			for (ProjectSection b: a)
-			{
-				for (TaskModel c : b)
-				{
-					c.setDirty(false);
-				}
-			}
-			a.setDirty(false);
-		}
-		model.setDirty(false);
+		model.setSelected(index);
 	}
 	public void update()
 	{
