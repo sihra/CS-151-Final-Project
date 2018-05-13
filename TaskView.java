@@ -1,5 +1,6 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
@@ -19,6 +20,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SpringLayout;
 
 public class TaskView extends JFrame implements ViewInterface {
 	TaskModel data;
@@ -48,7 +50,8 @@ public class TaskView extends JFrame implements ViewInterface {
 		controller = new TaskController(data, parent);
 		isEditing = editMode;
 		// Creates border of the task itself in the column
-		setLayout(new BorderLayout());
+		SpringLayout layout = new SpringLayout();
+		setLayout(layout);
 
 		// Have seperate text fields to make it easier to change in view class and
 		// translate to model/controller classes
@@ -61,7 +64,27 @@ public class TaskView extends JFrame implements ViewInterface {
 
 		editB = new JButton("edit");
 		okB = new JButton("Ok");
+		TaskView ext = this;
+		okB.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				update();
+				updateModel();
+				ext.dispose();
+			}
+		});
+		
+
 		closeB = new JButton("Close");
+		closeB.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ext.dispose();
+				
+			}
+		});
 		// Creating JPanel for buttons
 		JPanel options = new JPanel();
 
@@ -70,18 +93,21 @@ public class TaskView extends JFrame implements ViewInterface {
 
 		// Adds an edit button to a JPanel
 		infoPane.setLayout(new BoxLayout(infoPane, BoxLayout.Y_AXIS));
-		options.add(editB);
+		//options.add(editB);
 		// If there's any action, then do this
 		editB.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+
+
+
 				isEditing = !isEditing;
 				update();
 				if (!isEditing) {
 					updateModel();
 				}
-			}	
+			}
 		});
 
 		// Closing the JPanel application
@@ -118,17 +144,48 @@ public class TaskView extends JFrame implements ViewInterface {
 
 			}
 		});
-
-		options.add(okB);
-		options.add(closeB);
-		options.add(statusChange);
-		infoPane.add(title);
-		infoPane.add(description);
-		infoPane.add(date);
-		add(infoPane, BorderLayout.NORTH);
-		add(options, BorderLayout.SOUTH);
+		
+		Container mp = getContentPane();
+		JLabel titleL = new JLabel("Title: ");
+		JLabel textL = new JLabel("Description: ");
+		JLabel dateL = new JLabel("Date: ");
+		JLabel sectionL = new JLabel("Section: ");
+		
+		layout.putConstraint(SpringLayout.NORTH, title, 5, SpringLayout.NORTH, mp);
+		layout.putConstraint(SpringLayout.WEST, title, 75, SpringLayout.WEST, mp);
+		
+		layout.putConstraint(SpringLayout.NORTH, description, 20, SpringLayout.SOUTH, title);
+		layout.putConstraint(SpringLayout.WEST, description, 0, SpringLayout.WEST, title);
+		layout.putConstraint(SpringLayout.EAST, description, -20, SpringLayout.EAST, mp);
+		layout.putConstraint(SpringLayout.SOUTH, description, -100, SpringLayout.SOUTH, mp);
+		
+		layout.putConstraint(SpringLayout.NORTH, date, 15, SpringLayout.SOUTH, description);
+		layout.putConstraint(SpringLayout.WEST, date, 0, SpringLayout.WEST, description);
+		
+		layout.putConstraint(SpringLayout.NORTH, closeB, 5, SpringLayout.SOUTH, date);
+		layout.putConstraint(SpringLayout.EAST, closeB, 0, SpringLayout.EAST, description);
+		
+		layout.putConstraint(SpringLayout.NORTH, okB, 0, SpringLayout.NORTH, closeB);
+		layout.putConstraint(SpringLayout.EAST, okB, -15, SpringLayout.WEST, closeB);
+		
+		layout.putConstraint(SpringLayout.NORTH, editB, 0, SpringLayout.NORTH, okB);
+		layout.putConstraint(SpringLayout.EAST, editB, -15, SpringLayout.WEST, okB);
+		
+		layout.putConstraint(SpringLayout.NORTH, statusChange, 0, SpringLayout.NORTH, editB);
+		layout.putConstraint(SpringLayout.EAST, statusChange, -15, SpringLayout.WEST, editB);
+		
+		mp.add(okB);
+		mp.add(closeB);
+		mp.add(statusChange);
+		mp.add(title);
+		mp.add(description);
+		mp.add(date);
+		mp.add(editB);
+		//add(infoPane, BorderLayout.NORTH);
+		//add(options, BorderLayout.SOUTH);
 		update();
 		pack();
+		setMinimumSize(new Dimension(425, 300));
 
 	}
 
@@ -165,6 +222,7 @@ public class TaskView extends JFrame implements ViewInterface {
 				title.setEditable(isEditing);
 				description.setEditable(isEditing);
 				date.setEditable(isEditing);
+				statusChange.setEnabled(isEditing);
 				// method just created
 				updateStatus();
 				repaint();
