@@ -14,16 +14,30 @@ public class ProjectModel implements Iterable<ProjectSection> {
 	 * order is preserved, and they can be divided up into different sections.
 	 * One idea could be to use a double array
 	 */
-	private String name;
+	private boolean isDirty = false;
+	public boolean isDirty() {
+		return isDirty;
+	}
+
+	public void setDirty(boolean isDirty) {
+		this.isDirty = isDirty;
+	}
 	private ArrayList<ViewInterface> views = new ArrayList<>();
 	/** the list of sections contained in this project, default will contain 4 sections */
-	private ArrayList<ProjectSection> sections;
-	public ArrayList<ProjectSection> getSections() {
-		return sections;
-	}
+	private ArrayList<ProjectSection> sections; // Status of the task
 	public void setSections(ArrayList<ProjectSection> sections) {
 		this.sections = sections;
 	}
+	private String name;
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+		notifyViews();
+	}
+
 	/**
 	 * Default constructor for project model objects, takes no parameters and
 	 * initializes the section to contain todo, inprogress, review, and done
@@ -31,15 +45,27 @@ public class ProjectModel implements Iterable<ProjectSection> {
 	public ProjectModel()
 	{
 		sections = new ArrayList<>();
+		name = "";
+	}
+	public ProjectModel(String _name)
+	{
+		sections = new ArrayList<>();
+		name = _name;
 		sections.add(new ProjectSection("TODO"));
 		sections.add(new ProjectSection("In-Progress"));
 		sections.add(new ProjectSection("Review"));
 		sections.add(new ProjectSection("Done"));
 	}
+	
+	/**
+	 * Method that attaches a View class to a ProjectModel
+	 * @param view - View class to be added
+	 */
 	public void attach(ViewInterface view)
 	{
 		views.add(view);
 	}
+	
 	/**
 	 * Adds a task to an associated section in the project model.
 	 * @param t - TaskModel to be added to this project model
@@ -88,9 +114,19 @@ public class ProjectModel implements Iterable<ProjectSection> {
 	 * @param sec2 - String of the title of the section the task will be transfered to
 	 * @param TaskModel - The task object to be transfered
 	 */
-	public void transferTask(String sec1, String sec2, TaskModel t)
+	public void transferTask(TaskModel t, String sec2)
 	{
 		//TODO: implement me, gotta find an associated section, and another, then find the task
+		ProjectSection replace = getStatus(t);
+		for(ProjectSection section : sections) {
+			if(section.getTitle().equals(sec2)) {
+				replace.remove(t);
+				section.addTask(t);
+				notifyViews();
+				break;
+			}
+		}
+		
 	}
 	@Override
 	public Iterator<ProjectSection> iterator() {
@@ -106,12 +142,24 @@ public class ProjectModel implements Iterable<ProjectSection> {
 		}
 		return false;
 	}
+	public ArrayList<ProjectSection> getSections(){
+		return sections;
+	}
 	public int count()
 	{
 		return sections.size();
 	}
+	public ProjectSection getStatus(TaskModel t) {
+		for(ProjectSection section : sections) {
+			if(section.getList().contains(t)) {
+				return section;
+			}
+		}
+		return null;
+	}
 	public void notifyViews()
 	{
+		isDirty = true;
 		for (ViewInterface c : views)
 		{
 			c.update();

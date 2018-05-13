@@ -2,26 +2,42 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
+/**
+ * The purpose of this class is to hold the information of tasks within the TaskBoard
+ * @author sihra
+ *
+ */
+
 public class TaskModel implements Comparable<TaskModel>, Cloneable{
+
+	private boolean isDirty = false;
+	public boolean isDirty() {
+		return isDirty;
+	}
+
+	public void setDirty(boolean isDirty) {
+		this.isDirty = isDirty;
+	}
 
 	private String name;
 	private GregorianCalendar end;
 	private String text;
-	private ArrayList<ViewInterface> views = new ArrayList<ViewInterface>();
+	private ArrayList<ViewInterface> views = new ArrayList<ViewInterface>(); // ArrayList of View classes that are used to represent parts of TaskModel
 	private String category;
-	public String getCategory() {
-		return category;
-	}
-	public void setCategory(String category) {
-		this.category = category;
-	}
 	public TaskModel()
 	{
-		this.name = "New Task";
-		this.end = new GregorianCalendar();
+		this.name = "";
+		this.end = null;
 		this.text = "";
-		this.category = "TODO";
+		this.category = "";
 	}
+	/**
+	 * TaskModel constructor that initializes the Task variables and view class attached to TaskModel
+	 * @param name - name of the task
+	 * @param end - Due Date of the task
+	 * @param text - Description of task
+	 * @param category - Category of task
+	 */
 	public TaskModel(String name, GregorianCalendar end, String text, String category)
 	{
 		this.name = name;
@@ -29,6 +45,14 @@ public class TaskModel implements Comparable<TaskModel>, Cloneable{
 		this.text = text;
 		this.category = category;
 	}
+	
+	public String getCategory() {
+		return category;
+	}
+	public void setCategory(String category) {
+		this.category = category;
+	}
+
 	/**
 	 * Returns the start date for this task
 	 * @return Date representing the start date
@@ -81,6 +105,10 @@ public class TaskModel implements Comparable<TaskModel>, Cloneable{
 		SimpleDateFormat y = new SimpleDateFormat("MM-dd-yyyy");
 		return "["+name+", "+y.format(end.getTime())+"]";
 	}
+	
+	/**
+	 * When is the equals method used?????************
+	 */
 	@Override
 	public boolean equals(Object o)
 	{
@@ -107,11 +135,13 @@ public class TaskModel implements Comparable<TaskModel>, Cloneable{
 	}
 	public void notifyViews()
 	{
+		isDirty = true;
 		for (ViewInterface c : views)
 		{
 			c.update();
 		}
 	}
+	
 	@Override
 	public Object clone()
 	{
