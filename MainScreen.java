@@ -16,6 +16,39 @@ import javax.swing.JPanel;
 public class MainScreen extends JFrame implements ViewInterface{
 	private ProjectView projView;
 	private TaskBoardEditPanel editP;
+	public void setLoggedIn(boolean b)
+	{
+		MainScreen ext = this;
+		EventQueue.invokeLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				ext.getContentPane().removeAll();
+				if (b)
+				{
+					data = new TaskBoardModel();
+					setLayout(new BorderLayout());
+					projView = new ProjectView();
+					editP = new TaskBoardEditPanel(data, ext);
+					data.attach(editP);
+					add(editP, BorderLayout.NORTH);
+					add(projView, BorderLayout.SOUTH);
+					pack();
+				}
+				else
+				{
+					LoginView lc = new LoginView();
+					lc.setParent(ext);
+					setLayout(new BorderLayout());
+					getContentPane().add(lc, BorderLayout.CENTER);
+					revalidate();
+					repaint();
+					pack();
+				}
+			}
+		});
+
+	}
 	public ProjectView getProjectView()
 	{
 		return projView;
@@ -56,15 +89,7 @@ public class MainScreen extends JFrame implements ViewInterface{
 	}
 	public MainScreen()
 	{
-		data = new TaskBoardModel();
-		setLayout(new BorderLayout());
-		projView = new ProjectView();
-		editP = new TaskBoardEditPanel(data, this);
-		data.attach(editP);
-		add(editP, BorderLayout.NORTH);
-		add(projView, BorderLayout.SOUTH);
-		pack();
-		
+		setLoggedIn(false);
 	}
 	public void setData(TaskBoardModel _data)
 	{
