@@ -27,10 +27,11 @@ public class TaskLabel extends JTextArea implements ViewInterface{
 	public static final int DEFAULT_WIDTH = 100;
 	public static final int DEFAULT_HEIGHT = 100;
 	private TaskModel data; //reference to the TaskModel of the current task this label is displaying
-	private Color taskColor = Color.YELLOW;
+	private Color taskColor = Color.WHITE;
 	private String text; // Any text to be shown on screen
 	private ProjectController controller; // ProjectController object to
 	private boolean isHighlighted = false;
+	
 	public Color getTaskColor()
 	{
 		return taskColor;
@@ -38,6 +39,8 @@ public class TaskLabel extends JTextArea implements ViewInterface{
 	public TaskLabel(TaskModel data, ProjectController caller, DragListener d)
 	{
 		controller = caller;
+		this.data = data;
+		taskColor = data.getColor();
 		setEditable(false); // Setter method for the JTextArea declaring it non editable
 		setHighlighter(null);
 		setBackground(taskColor); // Background color of the TextArea for the column itself
@@ -91,6 +94,7 @@ public class TaskLabel extends JTextArea implements ViewInterface{
 			public void run() {
 				updateText();
 				setText(text);
+				taskColor = data.getColor();
 				if (isHighlighted)
 				{
 					setBackground(Color.GREEN);

@@ -7,7 +7,7 @@ import java.util.TreeSet;
  * @author Zackary Finer
  *
  */
-public class ProjectSection implements Iterable<TaskModel> {
+public class ProjectSection implements Iterable<TaskModel>, Cloneable{
 	
 	/** The list of tasks in this section, sorted in order of start date */
 	private TreeSet<TaskModel> list;
@@ -40,10 +40,12 @@ public class ProjectSection implements Iterable<TaskModel> {
 	 */
 	public void addTask(TaskModel t)
 	{
+		t.setCategory(title);
 		list.add(t);
 	}
 	
 	//***** use a hashset instead??
+	// the order of the data in here is used to determine the order on the taskboard itself, because of this it needs to be a tree set
 	/** 
 	 * Method that takes out duplicates of the same task from the section itself
 	 */
@@ -52,10 +54,13 @@ public class ProjectSection implements Iterable<TaskModel> {
 		TreeSet<TaskModel> temp = new TreeSet<>();
 		
 		for (TaskModel c : list)
+		{
 			temp.add(c);
+		}
 		
 		list.clear();
 		list.addAll(temp);
+		//System.out.println(list.toString());
 		//System.out.println(list.toString());
 		//notifyAll();
 	}
@@ -95,5 +100,11 @@ public class ProjectSection implements Iterable<TaskModel> {
 	public Iterator<TaskModel> iterator() {
 		// TODO Auto-generated method stub
 		return list.iterator();
+	}
+	public Object clone()
+	{
+		ProjectSection p = new ProjectSection(title);
+		p.list = (TreeSet<TaskModel>)this.list.clone();
+		return p;
 	}
 }

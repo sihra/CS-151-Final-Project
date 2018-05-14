@@ -25,10 +25,6 @@ public class ProjectController {
 	public int getCount() {
 		return model.count();
 	}
-	
-	public int taskCount() {
-		return model.taskCount();
-	}
 
 	public void updateTask(String s) {
 		model.updateTask(s);

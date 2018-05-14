@@ -27,7 +27,6 @@ public class ProjectEditView extends JFrame implements ViewInterface{
 	private JTextField columnName;
 	private DefaultListModel<ProjectSection> sectionListModel;
 	private JScrollPane sectionListScroller;
-	
 	public void initSectionFields()
 	{
 		sectionListModel = new DefaultListModel<>();
@@ -54,7 +53,7 @@ public class ProjectEditView extends JFrame implements ViewInterface{
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				int r = JOptionPane.showConfirmDialog(null, columnName);
+				int r = JOptionPane.showConfirmDialog(null, columnName, "Add Column", JOptionPane.OK_CANCEL_OPTION);
 				if (r==JOptionPane.OK_OPTION)
 				{
 					String rText = columnName.getText();
@@ -98,7 +97,7 @@ public class ProjectEditView extends JFrame implements ViewInterface{
 		contentPane.add(addColumnB);
 		add(contentPane);
 		setMinimumSize(new Dimension(400, 300));
-		setMaximumSize(new Dimension(400, 300));
+		setResizable(false);
 	}
 	public ProjectEditView(ProjectModel data) {
 		this.data = data;

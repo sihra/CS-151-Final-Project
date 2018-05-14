@@ -8,7 +8,7 @@ import java.util.NoSuchElementException;
  * @author Zackary Finer
  *
  */
-public class ProjectModel implements Iterable<ProjectSection> {
+public class ProjectModel implements Iterable<ProjectSection>, Cloneable {
 	/*
 	 * So this is the challenge, tasks need to be stored in such a way that their
 	 * order is preserved, and they can be divided up into different sections.
@@ -29,8 +29,6 @@ public class ProjectModel implements Iterable<ProjectSection> {
 		this.sections = sections;
 	}
 	private String name;
-	private int taskCount = 1;
-	
 	public String getName() {
 		return name;
 	}
@@ -76,8 +74,6 @@ public class ProjectModel implements Iterable<ProjectSection> {
 	 */
 	public void addTask(TaskModel t, String section) throws NoSuchElementException
 	{
-		t.setNumber(taskCount);
-		taskCount++;
 		for (int i = 0; i < sections.size(); i++)//search for the right section
 		{
 			if (sections.get(i).getTitle().toLowerCase().equals(section.toLowerCase()))//if we find it
@@ -96,6 +92,19 @@ public class ProjectModel implements Iterable<ProjectSection> {
 			if (sections.get(i).getTitle().toLowerCase().equals(section.toLowerCase()))//if we find it
 			{
 				sections.get(i).updateTask();//update the specified task
+				return;//terminate
+			}
+			notifyViews();
+		}
+		throw new NoSuchElementException("The associated section " + section + " could not be found.");
+	}
+	public void removeTask(TaskModel d, String section)
+	{
+		for (int i = 0; i < sections.size(); i++)//search for the right section
+		{
+			if (sections.get(i).getTitle().toLowerCase().equals(section.toLowerCase()))//if we find it
+			{
+				sections.get(i).remove(d);//add the task
 				notifyViews();
 				return;//terminate
 			}
@@ -166,15 +175,23 @@ public class ProjectModel implements Iterable<ProjectSection> {
 		}
 		return null;
 	}
-	public int taskCount() {
-		return taskCount;
+	public String toString()
+	{
+		return name;
 	}
 	public void notifyViews()
 	{
-		isDirty = true;
+		setDirty(true);
 		for (ViewInterface c : views)
 		{
 			c.update();
 		}
+	}
+	public Object clone()
+	{
+		ProjectModel p = new ProjectModel();
+		p.name = this.name;
+		p.sections = (ArrayList<ProjectSection>)this.sections.clone();
+		return p;
 	}
 }

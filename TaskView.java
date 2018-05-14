@@ -1,5 +1,6 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
@@ -10,15 +11,21 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.text.SimpleDateFormat;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SpringLayout;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 public class TaskView extends JFrame implements ViewInterface {
 	TaskModel data;
@@ -35,6 +42,8 @@ public class TaskView extends JFrame implements ViewInterface {
 	private JComboBox statusChange;
 	private String[] taskSections;
 	private boolean isEditing;
+	private JButton colorChange;
+	private Color newColor;
 
 	public TaskView(TaskModel _data, boolean editMode, ProjectController _parent) {
 		super("Task View");
@@ -48,7 +57,8 @@ public class TaskView extends JFrame implements ViewInterface {
 		controller = new TaskController(data, parent);
 		isEditing = editMode;
 		// Creates border of the task itself in the column
-		setLayout(new BorderLayout());
+		SpringLayout layout = new SpringLayout();
+		setLayout(layout);
 
 		// Have seperate text fields to make it easier to change in view class and
 		// translate to model/controller classes
@@ -61,7 +71,26 @@ public class TaskView extends JFrame implements ViewInterface {
 
 		editB = new JButton("edit");
 		okB = new JButton("Ok");
+		TaskView ext = this;
+		okB.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				update();
+				updateModel();
+				ext.dispose();
+			}
+		});
+
 		closeB = new JButton("Close");
+		closeB.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ext.dispose();
+
+			}
+		});
 		// Creating JPanel for buttons
 		JPanel options = new JPanel();
 
@@ -70,12 +99,13 @@ public class TaskView extends JFrame implements ViewInterface {
 
 		// Adds an edit button to a JPanel
 		infoPane.setLayout(new BoxLayout(infoPane, BoxLayout.Y_AXIS));
-		options.add(editB);
+		// options.add(editB);
 		// If there's any action, then do this
 		editB.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+
 				isEditing = !isEditing;
 				update();
 				if (!isEditing) {
@@ -91,9 +121,37 @@ public class TaskView extends JFrame implements ViewInterface {
 			public void actionPerformed(ActionEvent e) {
 				options.setVisible(false);
 				infoPane.setVisible(false);
-				
+
 			}
 		});
+		// Box display = Box.Filler(20, 20, 20);
+		colorChange = new JButton("Task Color");
+		JLabel banner = new JLabel("Pick a Task Color");
+		banner.setForeground(Color.BLACK);
+		JColorChooser colorPicker = new JColorChooser(banner.getForeground());
+
+		colorChange.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JDialog dialog = JColorChooser.createDialog(null, "Color Chooser", true, colorPicker, null, null);
+				dialog.setVisible(true);
+
+				colorPicker.getSelectionModel().addChangeListener(new ChangeListener() {
+					;
+					@Override
+
+					public void stateChanged(ChangeEvent arg0) {
+						newColor = colorPicker.getColor();
+						// banner.setForeground(newColor);
+						data.setColor(newColor);
+					}
+
+				});
+				dialog.setVisible(false);
+			}
+		});
+
+		// dialog.setVisible(true);
 
 		int count = 0;
 		for (ProjectSection section : parent.getSections()) {
@@ -118,17 +176,65 @@ public class TaskView extends JFrame implements ViewInterface {
 
 			}
 		});
+		JButton deleteB = new JButton("Delete");
+		deleteB.addActionListener(new ActionListener() {
 
-		options.add(okB);
-		options.add(closeB);
-		options.add(statusChange);
-		infoPane.add(title);
-		infoPane.add(description);
-		infoPane.add(date);
-		add(infoPane, BorderLayout.NORTH);
-		add(options, BorderLayout.SOUTH);
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				parent.getModel().removeTask(data, data.getCategory());
+				dispose();
+
+			}
+		});
+		Container mp = getContentPane();
+		JLabel titleL = new JLabel("Title: ");
+		JLabel textL = new JLabel("Description: ");
+		JLabel dateL = new JLabel("Date: ");
+		JLabel sectionL = new JLabel("Section: ");
+
+		layout.putConstraint(SpringLayout.NORTH, title, 5, SpringLayout.NORTH, mp);
+		layout.putConstraint(SpringLayout.WEST, title, 75, SpringLayout.WEST, mp);
+
+		layout.putConstraint(SpringLayout.NORTH, description, 20, SpringLayout.SOUTH, title);
+		layout.putConstraint(SpringLayout.WEST, description, 0, SpringLayout.WEST, title);
+		layout.putConstraint(SpringLayout.EAST, description, -20, SpringLayout.EAST, mp);
+		layout.putConstraint(SpringLayout.SOUTH, description, -100, SpringLayout.SOUTH, mp);
+
+		layout.putConstraint(SpringLayout.NORTH, date, 15, SpringLayout.SOUTH, description);
+		layout.putConstraint(SpringLayout.WEST, date, 0, SpringLayout.WEST, description);
+
+		layout.putConstraint(SpringLayout.NORTH, closeB, 5, SpringLayout.SOUTH, date);
+		layout.putConstraint(SpringLayout.EAST, closeB, 0, SpringLayout.EAST, description);
+
+		layout.putConstraint(SpringLayout.NORTH, okB, 0, SpringLayout.NORTH, closeB);
+		layout.putConstraint(SpringLayout.EAST, okB, -15, SpringLayout.WEST, closeB);
+		
+		layout.putConstraint(SpringLayout.NORTH, colorChange, 0, SpringLayout.NORTH, okB );
+		layout.putConstraint(SpringLayout.EAST, colorChange, -15, SpringLayout.WEST, okB);
+
+		layout.putConstraint(SpringLayout.NORTH, editB, 0, SpringLayout.NORTH, colorChange);
+		layout.putConstraint(SpringLayout.EAST, editB, -15, SpringLayout.WEST, colorChange);
+
+		layout.putConstraint(SpringLayout.NORTH, deleteB, 0, SpringLayout.NORTH, editB);
+		layout.putConstraint(SpringLayout.EAST, deleteB, -15, SpringLayout.WEST, editB);
+
+		layout.putConstraint(SpringLayout.NORTH, statusChange, 0, SpringLayout.NORTH, deleteB);
+		layout.putConstraint(SpringLayout.EAST, statusChange, -15, SpringLayout.WEST, deleteB);
+
+		mp.add(okB);
+		mp.add(closeB);
+		mp.add(statusChange);
+		mp.add(title);
+		mp.add(description);
+		mp.add(date);
+		mp.add(colorChange);
+		mp.add(editB);
+		mp.add(deleteB);
+		// add(infoPane, BorderLayout.NORTH);
+		// add(options, BorderLayout.SOUTH);
 		update();
 		pack();
+		setMinimumSize(new Dimension(500, 300));
 
 	}
 
@@ -148,6 +254,7 @@ public class TaskView extends JFrame implements ViewInterface {
 		controller.setTitle(title.getText());
 		controller.setDescription(description.getText());
 		controller.setDueDate(date.getText());
+		data.setColor(newColor);
 
 	}
 
@@ -165,10 +272,14 @@ public class TaskView extends JFrame implements ViewInterface {
 				title.setEditable(isEditing);
 				description.setEditable(isEditing);
 				date.setEditable(isEditing);
+				statusChange.setEnabled(isEditing);
+				newColor = data.getColor();
+
 				// method just created
 				updateStatus();
 				repaint();
 				date.setText(f.format(data.getEnd().getTime()));
+				parent.getModel().updateTask(data.getCategory());
 				revalidate();
 			}
 		});

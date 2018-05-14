@@ -18,6 +18,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -65,7 +66,12 @@ public class ProjectView extends JPanel implements ViewInterface{
 				
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
-					parent.addTask(model.getTitle(), new TaskModel("New Task", new GregorianCalendar(), "",model.getTitle()));
+					TaskModel toEdit = new TaskModel("New Task", new GregorianCalendar(), "",model.getTitle());
+					TaskView c = new TaskView(toEdit,true,parent);
+					c.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+					c.setVisible(true);
+					toEdit.attach(c);
+					parent.addTask(model.getTitle(), toEdit);
 				}
 			});
 			add(new JLabel(model.getTitle()));
@@ -80,18 +86,17 @@ public class ProjectView extends JPanel implements ViewInterface{
 			 * See explanation below
 			 */
 			EventQueue.invokeLater(new Runnable() { public void run() {
-			if (count!=model.count())
+
+			count = 0;
+			taskView.removeAll();
+			for(TaskModel c : model)
 			{
-				count = 0;
-				taskView.removeAll();
-				for(TaskModel c : model)
-				{
-					taskView.add(new TaskLabel(c, controller,dListener));
-					taskView.add(Box.createRigidArea(new Dimension(V_SPACING,V_SPACING)));
-					count++;
-				}
-				taskView.revalidate();
+				taskView.add(new TaskLabel(c, controller,dListener));
+				taskView.add(Box.createRigidArea(new Dimension(V_SPACING,V_SPACING)));
+				count++;
 			}
+			taskView.revalidate();
+			/*
 			for (int i = 0; i < taskView.getComponentCount(); i++)
 			{
 				if (taskView.getComponent(i) instanceof TaskLabel)//this is jank, should probably come up with a better solution
@@ -100,7 +105,7 @@ public class ProjectView extends JPanel implements ViewInterface{
 					d.update();
 				}
 			}
-			
+			*/
 			}});
 		}
 		public ProjectSection getModel()
@@ -114,7 +119,6 @@ public class ProjectView extends JPanel implements ViewInterface{
 	private JScrollPane taskScroller;
 	private DragListener dListener;
 	private int count;
-	
 	public ProjectView()
 	{
 		//do nothing if there isn't any content to add
@@ -136,25 +140,25 @@ public class ProjectView extends JPanel implements ViewInterface{
 		taskScroller = new JScrollPane(taskColumns, JScrollPane.VERTICAL_SCROLLBAR_NEVER,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		add(taskScroller, BorderLayout.CENTER);
 		
-//		JPanel buttons = new JPanel();
-//		JTextField columnName = new JTextField(40);
-//		JButton addColumnB = new JButton("Add Column");
-//		addColumnB.addActionListener(new ActionListener() {
-//			@Override
-//			public void actionPerformed(ActionEvent e) {
-//				if (columnName.getText()!=null && columnName.getText().length()>0)
-//				{
-//					controller.addColumn(columnName.getText());
-//				}
-//				else
-//				{
-//					JOptionPane.showMessageDialog(null, "Please insert a name for the column");
-//				}
-//			}
-//		});
-//		buttons.add(columnName);
-//		buttons.add(addColumnB);
-//		add(buttons, BorderLayout.SOUTH);
+		JPanel buttons = new JPanel();
+		JTextField columnName = new JTextField(40);
+		JButton addColumnB = new JButton("Add Column");
+		addColumnB.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (columnName.getText()!=null && columnName.getText().length()>0)
+				{
+					controller.addColumn(columnName.getText());
+				}
+				else
+				{
+					JOptionPane.showMessageDialog(null, "Please insert a name for the column");
+				}
+			}
+		});
+		buttons.add(columnName);
+		buttons.add(addColumnB);
+		add(buttons, BorderLayout.SOUTH);
 	}
 	public ArrayList<ColumnView> getSections()
 	{
@@ -199,7 +203,6 @@ public class ProjectView extends JPanel implements ViewInterface{
 				d.update();
 			}
 			revalidate();
-			
 			}
 			repaint();
 	    }});
