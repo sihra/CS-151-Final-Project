@@ -179,6 +179,9 @@ public class ProjectModel implements Iterable<ProjectSection>, Cloneable {
 	{
 		return name;
 	}
+	public ArrayList<ViewInterface> getViews(){
+		return views;
+	}
 	public void notifyViews()
 	{
 		setDirty(true);

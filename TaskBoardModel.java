@@ -53,6 +53,11 @@ public class TaskBoardModel implements Iterable<ProjectModel>, Cloneable{
 		projectList.add(p);
 		notifyViews();
 	}
+	public void deleteProject(ProjectModel p) {
+		int remove = projectList.indexOf(p);
+		projectList.remove(remove);
+		notifyViews();
+	}
 	public ProjectModel getSelectedModel()
 	{
 		if (projectList.size()>0)

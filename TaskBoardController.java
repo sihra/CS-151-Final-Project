@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 
 public class TaskBoardController {
 	/*
@@ -15,6 +16,14 @@ public class TaskBoardController {
 	private MainScreen view;
 	private String taskBoardName;
 	private String filePath;
+	
+	public ArrayList<ProjectModel> getProjectList() {
+		return model.getProjectList();
+	}
+	
+	public void deleteProject(ProjectModel p) {
+		model.deleteProject(p);
+	}
 	public void setBoardName(String name)
 	{
 		this.taskBoardName = name;

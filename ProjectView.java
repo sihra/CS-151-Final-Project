@@ -80,6 +80,7 @@ public class ProjectView extends JPanel implements ViewInterface{
 			addMouseListener(d);
 			
 		}
+
 		public void update()
 		{
 			/*
@@ -207,6 +208,9 @@ public class ProjectView extends JPanel implements ViewInterface{
 			repaint();
 	    }});
 
+	}
+	public ProjectModel getProjectModel() {
+		return data;
 	}
 	public ProjectController getController()
 	{
