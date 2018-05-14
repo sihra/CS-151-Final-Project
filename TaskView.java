@@ -43,7 +43,7 @@ public class TaskView extends JFrame implements ViewInterface {
 	private String[] taskSections;
 	private boolean isEditing;
 	private JButton colorChange;
-	private Color newColor;
+	private Color color;
 
 	public TaskView(TaskModel _data, boolean editMode, ProjectController _parent) {
 		super("Task View");
@@ -55,6 +55,7 @@ public class TaskView extends JFrame implements ViewInterface {
 		data.attach(this);
 		// Creates and attaches a new controller to the task
 		controller = new TaskController(data, parent);
+		color = data.getColor();
 		isEditing = editMode;
 		// Creates border of the task itself in the column
 		SpringLayout layout = new SpringLayout();
@@ -129,24 +130,24 @@ public class TaskView extends JFrame implements ViewInterface {
 		JLabel banner = new JLabel("Pick a Task Color");
 		banner.setForeground(Color.BLACK);
 		JColorChooser colorPicker = new JColorChooser(banner.getForeground());
+		colorPicker.getSelectionModel().addChangeListener(new ChangeListener() {
+			@Override
 
+			public void stateChanged(ChangeEvent arg0) {
+				color = colorPicker.getColor();
+				//System.out.println(getCol);
+				// banner.setForeground(newColor);
+				//data.setColor(new Color(colorPicker.getColor().getRGB()));
+			}
+
+		});
 		colorChange.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JDialog dialog = JColorChooser.createDialog(null, "Color Chooser", true, colorPicker, null, null);
 				dialog.setVisible(true);
 
-				colorPicker.getSelectionModel().addChangeListener(new ChangeListener() {
-					;
-					@Override
 
-					public void stateChanged(ChangeEvent arg0) {
-						newColor = colorPicker.getColor();
-						// banner.setForeground(newColor);
-						data.setColor(newColor);
-					}
-
-				});
 				dialog.setVisible(false);
 			}
 		});
@@ -234,7 +235,7 @@ public class TaskView extends JFrame implements ViewInterface {
 		// add(options, BorderLayout.SOUTH);
 		update();
 		pack();
-		setMinimumSize(new Dimension(500, 300));
+		setMinimumSize(new Dimension(600, 300));
 
 	}
 
@@ -254,7 +255,7 @@ public class TaskView extends JFrame implements ViewInterface {
 		controller.setTitle(title.getText());
 		controller.setDescription(description.getText());
 		controller.setDueDate(date.getText());
-		data.setColor(newColor);
+		data.setColor(color);
 
 	}
 
@@ -273,7 +274,8 @@ public class TaskView extends JFrame implements ViewInterface {
 				description.setEditable(isEditing);
 				date.setEditable(isEditing);
 				statusChange.setEnabled(isEditing);
-				newColor = data.getColor();
+				colorChange.setEnabled(isEditing);
+				//newColor = data.getColor();
 
 				// method just created
 				updateStatus();

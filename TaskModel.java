@@ -108,7 +108,10 @@ public class TaskModel implements Comparable<TaskModel>, Cloneable{
 		{
 			if ((decision=this.name.compareTo(other.name))==0)
 			{
-				decision = this.text.compareTo(other.text);
+				if ((decision = this.text.compareTo(other.text))==0)
+				{
+					decision = new Integer(this.taskColor.getRGB()).compareTo(other.taskColor.getRGB());
+				}
 			}
 			
 		}
@@ -122,6 +125,7 @@ public class TaskModel implements Comparable<TaskModel>, Cloneable{
 	
 	/**
 	 * When is the equals method used?????************
+	 * the equals method is used in the tree set
 	 */
 	@Override
 	public boolean equals(Object o)

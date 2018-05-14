@@ -43,7 +43,7 @@ public class TaskLabel extends JTextArea implements ViewInterface{
 		taskColor = data.getColor();
 		setEditable(false); // Setter method for the JTextArea declaring it non editable
 		setHighlighter(null);
-		setBackground(taskColor); // Background color of the TextArea for the column itself
+		setBackground(data.getColor()); // Background color of the TextArea for the column itself
 		setLineWrap(true); // Keeps the task in a closed rectangle space
 		setWrapStyleWord(true); // Keeps words in the text area together
 
@@ -94,11 +94,8 @@ public class TaskLabel extends JTextArea implements ViewInterface{
 			public void run() {
 				updateText();
 				setText(text);
-				taskColor = data.getColor();
-				if (isHighlighted)
-				{
-					setBackground(Color.GREEN);
-				}
+				//taskColor = data.getColor();
+				setBackground(data.getColor());
 				repaint();
 				
 			}
