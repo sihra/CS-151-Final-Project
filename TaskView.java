@@ -81,7 +81,7 @@ public class TaskView extends JFrame implements ViewInterface {
 				if (!isEditing) {
 					updateModel();
 				}
-			}	
+			}
 		});
 
 		// Closing the JPanel application

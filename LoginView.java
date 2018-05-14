@@ -8,7 +8,7 @@ public class LoginView extends JPanel{
 	private JTextField username;
 	private JTextField password;
 	private JButton loginB;
-	//private LoginController controller;
+	private LoginController controller;
 	private boolean isValid = false;
 	public LoginView()
 	{
