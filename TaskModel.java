@@ -135,7 +135,7 @@ public class TaskModel implements Comparable<TaskModel>, Cloneable{
 	}
 	public void notifyViews()
 	{
-		isDirty = true;
+		setDirty(true);
 		for (ViewInterface c : views)
 		{
 			c.update();
@@ -145,6 +145,6 @@ public class TaskModel implements Comparable<TaskModel>, Cloneable{
 	@Override
 	public Object clone()
 	{
-		return new TaskModel(name, end, text, category);
+		return new TaskModel((String)name, (GregorianCalendar)end.clone(), (String)text, (String)category);
 	}
 }

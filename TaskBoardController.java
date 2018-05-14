@@ -52,8 +52,9 @@ public class TaskBoardController {
 		//TODO: use file loader here
 		
 		try {
-			c.getController().markClean();
+			model.getController().markClean();
 			TaskFileManager.saveToFile(c, location);
+			model.getController().markClean();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -82,8 +83,10 @@ public class TaskBoardController {
 	}
 	private void markClean()
 	{
+		model.setDirty(false);
 		for (ProjectModel a : model)
 		{
+			a.setDirty(false);
 			for (ProjectSection b: a)
 			{
 				for (TaskModel c : b)
@@ -91,9 +94,8 @@ public class TaskBoardController {
 					c.setDirty(false);
 				}
 			}
-			a.setDirty(false);
+			
 		}
-		model.setDirty(false);
 	}
 	public void update()
 	{

@@ -1,6 +1,7 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.GridLayout;
@@ -9,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
@@ -16,7 +18,9 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -62,7 +66,12 @@ public class ProjectView extends JPanel implements ViewInterface{
 				
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
-					parent.addTask(model.getTitle(), new TaskModel("New Task", new GregorianCalendar(), "",model.getTitle()));
+					TaskModel toEdit = new TaskModel("New Task", new GregorianCalendar(), "",model.getTitle());
+					TaskView c = new TaskView(toEdit,true,parent);
+					c.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+					c.setVisible(true);
+					toEdit.attach(c);
+					parent.addTask(model.getTitle(), toEdit);
 				}
 			});
 			add(new JLabel(model.getTitle()));
@@ -77,18 +86,17 @@ public class ProjectView extends JPanel implements ViewInterface{
 			 * See explanation below
 			 */
 			EventQueue.invokeLater(new Runnable() { public void run() {
-			if (count!=model.count())
+
+			count = 0;
+			taskView.removeAll();
+			for(TaskModel c : model)
 			{
-				count = 0;
-				taskView.removeAll();
-				for(TaskModel c : model)
-				{
-					taskView.add(new TaskLabel(c, controller,dListener));
-					taskView.add(Box.createRigidArea(new Dimension(V_SPACING,V_SPACING)));
-					count++;
-				}
-				taskView.revalidate();
+				taskView.add(new TaskLabel(c, controller,dListener));
+				taskView.add(Box.createRigidArea(new Dimension(V_SPACING,V_SPACING)));
+				count++;
 			}
+			taskView.revalidate();
+			/*
 			for (int i = 0; i < taskView.getComponentCount(); i++)
 			{
 				if (taskView.getComponent(i) instanceof TaskLabel)//this is jank, should probably come up with a better solution
@@ -97,7 +105,7 @@ public class ProjectView extends JPanel implements ViewInterface{
 					d.update();
 				}
 			}
-			
+			*/
 			}});
 		}
 		public ProjectSection getModel()
@@ -138,7 +146,14 @@ public class ProjectView extends JPanel implements ViewInterface{
 		addColumnB.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				controller.addColumn(columnName.getText());
+				if (columnName.getText()!=null && columnName.getText().length()>0)
+				{
+					controller.addColumn(columnName.getText());
+				}
+				else
+				{
+					JOptionPane.showMessageDialog(null, "Please insert a name for the column");
+				}
 			}
 		});
 		buttons.add(columnName);
@@ -188,8 +203,8 @@ public class ProjectView extends JPanel implements ViewInterface{
 				d.update();
 			}
 			revalidate();
-			repaint();
 			}
+			repaint();
 	    }});
 
 	}
@@ -198,11 +213,13 @@ public class ProjectView extends JPanel implements ViewInterface{
 		return controller;
 	}
 }
-class DragListener implements MouseListener {
+class DragListener implements MouseListener, MouseMotionListener {
 	ProjectView context;
 	Component source;
 	Component over;
+	Color componentC;
 	String destination;
+	boolean isHolding;
 	ArrayList<ProjectView.ColumnView> targetColumns;
 	public DragListener(ProjectView _context) {
 			context = _context;
@@ -219,17 +236,37 @@ class DragListener implements MouseListener {
 		over = e.getComponent();
 		if (over.getClass().getName().equals("ProjectView$ColumnView"))
 		{
-			destination = ((ProjectView.ColumnView)over).getModel().getTitle();
+			ProjectView.ColumnView c = (ProjectView.ColumnView)over;
+			destination = c.getModel().getTitle();
+			if (isHolding)
+			{
+				componentC = c.getBackground();
+				c.setBackground(Color.gray);
+			}
 		}
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
+		if (over.getClass().getName().equals("ProjectView$ColumnView"))
+		{
+			e.getComponent().setBackground(componentC);
+		}
+		if (isHolding==false)
+		{
+			over=null;
+		}
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
 		source = e.getComponent();
+		if (source instanceof TaskLabel)
+		{
+			source.setBackground(Color.green);
+		}
+		
+		isHolding = true;
 	}
 
 	@Override
@@ -237,8 +274,8 @@ class DragListener implements MouseListener {
 		EventQueue.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				
-				if (over instanceof ProjectView.ColumnView)
+				source.setBackground(((TaskLabel)source).getTaskColor());
+				if (over!= null && over instanceof ProjectView.ColumnView)
 				{
 					ProjectView.ColumnView c = (ProjectView.ColumnView) over;
 					if (c.getModel().getTitle()==destination)
@@ -256,9 +293,19 @@ class DragListener implements MouseListener {
 					}
 				}
 				
+				isHolding = false;
 			}
 		});
 
+		
+	}
+	@Override
+	public void mouseDragged(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void mouseMoved(MouseEvent arg0) {
 		
 	}
 	

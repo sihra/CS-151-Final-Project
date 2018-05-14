@@ -6,7 +6,7 @@ import java.util.Iterator;
  * @author Zackary Finer
  *
  */
-public class TaskBoardModel implements Iterable<ProjectModel>{
+public class TaskBoardModel implements Iterable<ProjectModel>, Cloneable{
 	
 	private ArrayList<ProjectModel> projectList;
 	private Integer selectedIndex = new Integer(0);
@@ -66,7 +66,7 @@ public class TaskBoardModel implements Iterable<ProjectModel>{
 	}
 	public void notifyViews()
 	{
-		isDirty = true;
+		setDirty(true);
 		for (ViewInterface c : views)
 		{
 			c.update();
@@ -84,5 +84,13 @@ public class TaskBoardModel implements Iterable<ProjectModel>{
 	public TaskBoardController getController() {
 		// TODO Auto-generated method stub
 		return controller;
+	}
+	@Override
+	public Object clone()
+	{
+		TaskBoardModel d = new TaskBoardModel();
+		d.selectedIndex = this.selectedIndex;
+		d.projectList = (ArrayList<ProjectModel>) this.projectList.clone();
+		return d;
 	}
 }
